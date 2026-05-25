@@ -151,10 +151,11 @@ program
   .description('Display a summary JSON file in human-readable plain text')
   .requiredOption('--summary <path>', 'Path to summary JSON file (ts-summary.json, code-summary.json, fixture-summary.json)')
   .option('--fields <fields>', 'Comma-separated list of fields to display')
+  .option('--out <path>', 'Save output to a file (.txt or .md) instead of printing')
   .action((options) => {
     try {
       const fields = options.fields ? options.fields.split(',').map((s: string) => s.trim()) : undefined;
-      showSummary({ summaryPath: options.summary, fields });
+      showSummary({ summaryPath: options.summary, fields, outPath: options.out });
     } catch (err) {
       console.error('Error:', (err as Error).message);
       process.exit(1);

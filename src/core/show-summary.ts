@@ -1,9 +1,12 @@
+import { mkdirSync, writeFileSync } from 'fs';
+import { dirname } from 'path';
 import { readJson } from './read-json';
 import type { FixtureSummary } from '../types/fixture-summary';
 
 interface ShowSummaryOptions {
   summaryPath: string;
   fields?: string[];
+  outPath?: string;
 }
 
 export function formatSummary(summary: FixtureSummary, fields?: string[]): string {
@@ -21,8 +24,15 @@ export function formatSummary(summary: FixtureSummary, fields?: string[]): strin
   return parts.join('\n\n');
 }
 
-export function showSummary({ summaryPath, fields }: ShowSummaryOptions): void {
+export function showSummary({ summaryPath, fields, outPath }: ShowSummaryOptions): void {
   const summary = readJson(summaryPath) as FixtureSummary;
   const output = formatSummary(summary, fields);
-  if (output) console.log(output);
+
+  if (outPath) {
+    mkdirSync(dirname(outPath), { recursive: true });
+    writeFileSync(outPath, output);
+    console.log(`Saved: ${outPath}`);
+  } else {
+    if (output) console.log(output);
+  }
 }

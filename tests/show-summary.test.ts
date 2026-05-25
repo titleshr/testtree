@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, afterEach } from 'vitest';
-import { mkdirSync, rmSync } from 'fs';
+import { mkdirSync, rmSync, existsSync, readFileSync } from 'fs';
 import { join } from 'path';
 import { formatSummary, showSummary } from '../src/core/show-summary';
 import { writeJson } from '../src/core/write-json';
@@ -72,17 +72,14 @@ describe('formatSummary', () => {
 });
 
 describe('showSummary', () => {
-  it('reads summary file and prints all fields', () => {
+  it('prints to terminal when no --out given', () => {
     const summaryPath = join(TMP_DIR, 'ts-summary.json');
     writeJson(summaryPath, {
-      fields: {
-        status: { count: 2, values: ['PENDING', 'COMPLETE'] },
-      },
+      fields: { status: { count: 2, values: ['PENDING', 'COMPLETE'] } },
     });
     const lines: string[] = [];
-    const spy = (s: string) => lines.push(s);
     const original = console.log;
-    console.log = spy;
+    console.log = (s: string) => lines.push(s);
     try {
       showSummary({ summaryPath });
     } finally {
@@ -90,5 +87,48 @@ describe('showSummary', () => {
     }
     expect(lines.join('\n')).toContain('status:');
     expect(lines.join('\n')).toContain('- PENDING');
+  });
+
+  it('saves output to .txt file when --out given', () => {
+    const summaryPath = join(TMP_DIR, 'ts-summary.json');
+    const outPath = join(TMP_DIR, 'ts-summary.txt');
+    writeJson(summaryPath, {
+      fields: { status: { count: 2, values: ['PENDING', 'COMPLETE'] } },
+    });
+    showSummary({ summaryPath, outPath });
+    expect(existsSync(outPath)).toBe(true);
+    const content = readFileSync(outPath, 'utf-8');
+    expect(content).toContain('status:');
+    expect(content).toContain('- PENDING');
+  });
+
+  it('saves output to .md file when --out given', () => {
+    const summaryPath = join(TMP_DIR, 'ts-summary.json');
+    const outPath = join(TMP_DIR, 'ts-summary.md');
+    writeJson(summaryPath, {
+      fields: { 'payment.type': { count: 2, values: ['COD', 'BANK'] } },
+    });
+    showSummary({ summaryPath, outPath });
+    expect(existsSync(outPath)).toBe(true);
+    const content = readFileSync(outPath, 'utf-8');
+    expect(content).toContain('payment.type:');
+    expect(content).toContain('- COD');
+  });
+
+  it('does not print to terminal when --out given', () => {
+    const summaryPath = join(TMP_DIR, 'ts-summary.json');
+    const outPath = join(TMP_DIR, 'out.txt');
+    writeJson(summaryPath, {
+      fields: { status: { count: 1, values: ['COMPLETE'] } },
+    });
+    const printed: string[] = [];
+    const original = console.log;
+    console.log = (s: string) => printed.push(s);
+    try {
+      showSummary({ summaryPath, outPath });
+    } finally {
+      console.log = original;
+    }
+    expect(printed).toEqual([`Saved: ${outPath}`]);
   });
 });
