@@ -284,6 +284,45 @@ testtree merge-summary --code-summary ./ts-summary.json --fixture-summary ./fixt
 
 ---
 
+### `testtree show-summary`
+
+Display any summary JSON file in human-readable plain text. Works with `ts-summary.json`, `code-summary.json`, and `fixture-summary.json`.
+
+```bash
+testtree show-summary --summary <path> [--fields <fields>]
+```
+
+| Option | Description |
+|---|---|
+| `--summary` | Path to any summary JSON file |
+| `--fields` | Comma-separated list of fields to display (optional) |
+
+**Show all fields:**
+
+```bash
+testtree show-summary --summary ./testtree/ts-summary.json
+```
+
+```
+status:
+- PRE_PENDING
+- PENDING
+- COMPLETE
+
+payment.type:
+- COD
+- BANK
+- QR
+```
+
+**Show specific fields only:**
+
+```bash
+testtree show-summary --summary ./testtree/ts-summary.json --fields status,payment.type
+```
+
+---
+
 ## Example Input / Output
 
 **base-template.json**

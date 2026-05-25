@@ -8,6 +8,7 @@ import { scanCode } from '../core/scan-code';
 import { scanTypescript } from '../core/scan-typescript';
 import { summarizeConditions } from '../core/summarize-conditions';
 import { mergeSummaries } from '../core/merge-summaries';
+import { showSummary } from '../core/show-summary';
 import { loadConfig } from '../core/load-config';
 import { initConfig } from '../core/init-config';
 import { runFlow } from '../core/run-flow';
@@ -139,6 +140,21 @@ program
         conditionsPath: options.conditions,
         outPath: options.out,
       });
+    } catch (err) {
+      console.error('Error:', (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('show-summary')
+  .description('Display a summary JSON file in human-readable plain text')
+  .requiredOption('--summary <path>', 'Path to summary JSON file (ts-summary.json, code-summary.json, fixture-summary.json)')
+  .option('--fields <fields>', 'Comma-separated list of fields to display')
+  .action((options) => {
+    try {
+      const fields = options.fields ? options.fields.split(',').map((s: string) => s.trim()) : undefined;
+      showSummary({ summaryPath: options.summary, fields });
     } catch (err) {
       console.error('Error:', (err as Error).message);
       process.exit(1);
