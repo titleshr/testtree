@@ -296,8 +296,9 @@ testtree show-summary --summary <path> [--fields <fields>]
 |---|---|
 | `--summary` | Path to any summary JSON file |
 | `--fields` | Comma-separated list of fields to display (optional) |
+| `--out` | Save output to a `.txt` or `.md` file instead of printing (optional) |
 
-**Show all fields:**
+**Show all fields in terminal:**
 
 ```bash
 testtree show-summary --summary ./testtree/ts-summary.json
@@ -319,6 +320,13 @@ payment.type:
 
 ```bash
 testtree show-summary --summary ./testtree/ts-summary.json --fields status,payment.type
+```
+
+**Save output to file:**
+
+```bash
+testtree show-summary --summary ./testtree/ts-summary.json --out ./testtree/ts-summary.txt
+testtree show-summary --summary ./testtree/ts-summary.json --out ./testtree/ts-summary.md
 ```
 
 ---
