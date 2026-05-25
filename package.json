@@ -19,7 +19,7 @@
     "summarize-code:example": "tsx src/cli/index.ts summarize-conditions --conditions ./examples/order/code-conditions.json --out ./examples/order/code-summary.json",
     "summarize-ts:example": "tsx src/cli/index.ts summarize-conditions --conditions ./examples/order/ts-conditions.json --out ./examples/order/ts-summary.json",
     "merge-summary:example": "tsx src/cli/index.ts merge-summary --code-summary ./examples/order/ts-summary.json --fixture-summary ./examples/order/fixture-summary.json --out ./examples/order/coverage-summary.json",
-    "show-summary:example": "tsx src/cli/index.ts show-summary --summary ./examples/order/ts-summary.json",
+    "show-summary:example": "tsx src/cli/index.ts show-summary --summary ./examples/order/fixture-summary.json",
     "init-config:example": "tsx src/cli/index.ts init-config --force",
     "flow:example": "tsx src/cli/index.ts flow"
   },
