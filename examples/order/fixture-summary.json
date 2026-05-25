@@ -1,0 +1,49 @@
+{
+  "fields": {
+    "status": {
+      "count": 2,
+      "values": [
+        "COMPLETE",
+        "PENDING"
+      ]
+    },
+    "type": {
+      "count": 1,
+      "values": [
+        "EXAMPLE"
+      ]
+    },
+    "details.source": {
+      "count": 1,
+      "values": [
+        "manual"
+      ]
+    },
+    "details.isActive": {
+      "count": 1,
+      "values": [
+        true
+      ]
+    },
+    "payment.type": {
+      "count": 2,
+      "values": [
+        "COD",
+        "BANK"
+      ]
+    },
+    "payment.balance": {
+      "count": 2,
+      "values": [
+        0,
+        100
+      ]
+    },
+    "payment.isCompleted": {
+      "count": 1,
+      "values": [
+        false
+      ]
+    }
+  }
+}

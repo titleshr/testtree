@@ -1,0 +1,6 @@
+node_modules/
+dist/
+testtree/
+testtree.config.json
+*.js.map
+.claude/

@@ -1,0 +1,47 @@
+{
+  "name": "testtree",
+  "version": "1.0.0",
+  "description": "Grow scenario-based fixtures from base data",
+  "main": "dist/cli/index.js",
+  "bin": {
+    "testtree": "dist/cli/index.js"
+  },
+  "scripts": {
+    "dev": "tsx src/cli/index.ts",
+    "build": "tsc",
+    "test": "vitest",
+    "generate:example": "tsx src/cli/index.ts generate --base ./examples/order/base-template.json --variants ./examples/order/variants.json --out ./examples/order/fixtures",
+    "init:example": "tsx src/cli/index.ts init --out ./examples/order --force",
+    "inspect:example": "tsx src/cli/index.ts inspect --fixtures ./examples/order/fixtures --out ./examples/order/fixture-summary.json",
+    "catalog:example": "tsx src/cli/index.ts catalog --summary ./examples/order/fixture-summary.json --out ./examples/order/condition-catalog.json --domain order",
+    "scan-code:example": "tsx src/cli/index.ts scan-code --project ./src --out ./examples/order/code-conditions.json",
+    "scan-ts:example": "tsx src/cli/index.ts scan-ts --project ./src --out ./examples/order/ts-conditions.json",
+    "summarize-code:example": "tsx src/cli/index.ts summarize-conditions --conditions ./examples/order/code-conditions.json --out ./examples/order/code-summary.json",
+    "summarize-ts:example": "tsx src/cli/index.ts summarize-conditions --conditions ./examples/order/ts-conditions.json --out ./examples/order/ts-summary.json",
+    "merge-summary:example": "tsx src/cli/index.ts merge-summary --code-summary ./examples/order/ts-summary.json --fixture-summary ./examples/order/fixture-summary.json --out ./examples/order/coverage-summary.json",
+    "init-config:example": "tsx src/cli/index.ts init-config --force",
+    "flow:example": "tsx src/cli/index.ts flow"
+  },
+  "keywords": [
+    "test",
+    "fixtures",
+    "cli",
+    "test-data"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "commander": "^14.0.3",
+    "fast-glob": "^3.3.3",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.set": "^4.3.2",
+    "ts-morph": "^28.0.0",
+    "zod": "^4.4.3"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "tsx": "^4.22.3",
+    "typescript": "^6.0.3",
+    "vitest": "^4.1.7"
+  }
+}

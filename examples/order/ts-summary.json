@@ -1,0 +1,61 @@
+{
+  "fields": {
+    "typeof dirOrOptions": {
+      "count": 1,
+      "values": [
+        "string"
+      ]
+    },
+    "typeof value": {
+      "count": 2,
+      "values": [
+        "object",
+        "string"
+      ]
+    },
+    "typeof obj": {
+      "count": 1,
+      "values": [
+        "object"
+      ]
+    },
+    "typeof c": {
+      "count": 1,
+      "values": [
+        "object"
+      ]
+    },
+    "typeof obj['fieldPath']": {
+      "count": 1,
+      "values": [
+        "string"
+      ]
+    },
+    "typeof obj['value']": {
+      "count": 1,
+      "values": [
+        "string"
+      ]
+    },
+    "baseTemplateTemplate": {
+      "count": 2,
+      "values": [
+        "PENDING",
+        "EXAMPLE"
+      ]
+    },
+    "conditionCatalogTemplate": {
+      "count": 1,
+      "values": [
+        "example"
+      ]
+    },
+    "scenarioPlanTemplate": {
+      "count": 2,
+      "values": [
+        "example",
+        "balanced"
+      ]
+    }
+  }
+}

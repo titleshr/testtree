@@ -1,0 +1,13 @@
+{
+  "status": "PENDING",
+  "type": "EXAMPLE",
+  "details": {
+    "source": "manual",
+    "isActive": true
+  },
+  "payment": {
+    "type": "BANK",
+    "balance": 100,
+    "isCompleted": false
+  }
+}

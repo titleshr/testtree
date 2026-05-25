@@ -1,0 +1,41 @@
+{
+  "fields": {
+    "dirOrOptions": {
+      "count": 1,
+      "values": [
+        "string"
+      ]
+    },
+    "value": {
+      "count": 2,
+      "values": [
+        "object",
+        "string"
+      ]
+    },
+    "obj": {
+      "count": 1,
+      "values": [
+        "object"
+      ]
+    },
+    "identifier": {
+      "count": 1,
+      "values": [
+        "value"
+      ]
+    },
+    "a.b": {
+      "count": 1,
+      "values": [
+        "value"
+      ]
+    },
+    "c": {
+      "count": 1,
+      "values": [
+        "object"
+      ]
+    }
+  }
+}

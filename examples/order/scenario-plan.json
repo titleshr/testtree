@@ -1,0 +1,24 @@
+{
+  "domain": "example",
+  "strategy": "balanced",
+  "scenarios": [
+    {
+      "name": "example_complete",
+      "purpose": "Complete scenario description",
+      "coveredConditions": [
+        "status=COMPLETE",
+        "payment.type=COD"
+      ],
+      "priority": "HIGH"
+    },
+    {
+      "name": "example_pending_bank",
+      "purpose": "Pending with bank payment",
+      "coveredConditions": [
+        "status=PENDING",
+        "payment.type=BANK"
+      ],
+      "priority": "MEDIUM"
+    }
+  ]
+}

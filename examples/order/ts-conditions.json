@@ -1,0 +1,112 @@
+{
+  "conditions": [
+    {
+      "fieldPath": "typeof dirOrOptions",
+      "operator": "===",
+      "value": "string",
+      "file": "/Users/titlesaharat/testtree/src/core/find-source-files.ts",
+      "line": 21,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "typeof value",
+      "operator": "===",
+      "value": "object",
+      "file": "/Users/titlesaharat/testtree/src/core/flatten-object.ts",
+      "line": 6,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "typeof obj",
+      "operator": "!==",
+      "value": "object",
+      "file": "/Users/titlesaharat/testtree/src/core/flatten-object.ts",
+      "line": 15,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "typeof value",
+      "operator": "!==",
+      "value": "object",
+      "file": "/Users/titlesaharat/testtree/src/core/flatten-object.ts",
+      "line": 29,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "typeof value",
+      "operator": "===",
+      "value": "string",
+      "file": "/Users/titlesaharat/testtree/src/core/scan-typescript.ts",
+      "line": 90,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "typeof c",
+      "operator": "!==",
+      "value": "object",
+      "file": "/Users/titlesaharat/testtree/src/core/summarize-conditions.ts",
+      "line": 12,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "typeof obj['fieldPath']",
+      "operator": "===",
+      "value": "string",
+      "file": "/Users/titlesaharat/testtree/src/core/summarize-conditions.ts",
+      "line": 14,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "typeof obj['value']",
+      "operator": "===",
+      "value": "string",
+      "file": "/Users/titlesaharat/testtree/src/core/summarize-conditions.ts",
+      "line": 15,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "baseTemplateTemplate",
+      "operator": "===",
+      "value": "PENDING",
+      "file": "/Users/titlesaharat/testtree/src/templates/base-template-template.ts",
+      "line": 2,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "baseTemplateTemplate",
+      "operator": "===",
+      "value": "EXAMPLE",
+      "file": "/Users/titlesaharat/testtree/src/templates/base-template-template.ts",
+      "line": 3,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "conditionCatalogTemplate",
+      "operator": "===",
+      "value": "example",
+      "file": "/Users/titlesaharat/testtree/src/templates/condition-catalog-template.ts",
+      "line": 2,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "scenarioPlanTemplate",
+      "operator": "===",
+      "value": "example",
+      "file": "/Users/titlesaharat/testtree/src/templates/scenario-plan-template.ts",
+      "line": 2,
+      "sourceType": "binary-expression"
+    },
+    {
+      "fieldPath": "scenarioPlanTemplate",
+      "operator": "===",
+      "value": "balanced",
+      "file": "/Users/titlesaharat/testtree/src/templates/scenario-plan-template.ts",
+      "line": 3,
+      "sourceType": "binary-expression"
+    }
+  ],
+  "meta": {
+    "scanner": "ts-morph",
+    "accuracy": "ast-based"
+  }
+}

@@ -1,0 +1,256 @@
+{
+  "fields": {
+    "typeof dirOrOptions": {
+      "codeValues": [
+        "string"
+      ],
+      "fixtureValues": [],
+      "missingInFixtures": [
+        "string"
+      ],
+      "extraInFixtures": [],
+      "coverage": {
+        "covered": 0,
+        "total": 1,
+        "percent": 0
+      }
+    },
+    "typeof value": {
+      "codeValues": [
+        "object",
+        "string"
+      ],
+      "fixtureValues": [],
+      "missingInFixtures": [
+        "object",
+        "string"
+      ],
+      "extraInFixtures": [],
+      "coverage": {
+        "covered": 0,
+        "total": 2,
+        "percent": 0
+      }
+    },
+    "typeof obj": {
+      "codeValues": [
+        "object"
+      ],
+      "fixtureValues": [],
+      "missingInFixtures": [
+        "object"
+      ],
+      "extraInFixtures": [],
+      "coverage": {
+        "covered": 0,
+        "total": 1,
+        "percent": 0
+      }
+    },
+    "typeof c": {
+      "codeValues": [
+        "object"
+      ],
+      "fixtureValues": [],
+      "missingInFixtures": [
+        "object"
+      ],
+      "extraInFixtures": [],
+      "coverage": {
+        "covered": 0,
+        "total": 1,
+        "percent": 0
+      }
+    },
+    "typeof obj['fieldPath']": {
+      "codeValues": [
+        "string"
+      ],
+      "fixtureValues": [],
+      "missingInFixtures": [
+        "string"
+      ],
+      "extraInFixtures": [],
+      "coverage": {
+        "covered": 0,
+        "total": 1,
+        "percent": 0
+      }
+    },
+    "typeof obj['value']": {
+      "codeValues": [
+        "string"
+      ],
+      "fixtureValues": [],
+      "missingInFixtures": [
+        "string"
+      ],
+      "extraInFixtures": [],
+      "coverage": {
+        "covered": 0,
+        "total": 1,
+        "percent": 0
+      }
+    },
+    "baseTemplateTemplate": {
+      "codeValues": [
+        "PENDING",
+        "EXAMPLE"
+      ],
+      "fixtureValues": [],
+      "missingInFixtures": [
+        "PENDING",
+        "EXAMPLE"
+      ],
+      "extraInFixtures": [],
+      "coverage": {
+        "covered": 0,
+        "total": 2,
+        "percent": 0
+      }
+    },
+    "conditionCatalogTemplate": {
+      "codeValues": [
+        "example"
+      ],
+      "fixtureValues": [],
+      "missingInFixtures": [
+        "example"
+      ],
+      "extraInFixtures": [],
+      "coverage": {
+        "covered": 0,
+        "total": 1,
+        "percent": 0
+      }
+    },
+    "scenarioPlanTemplate": {
+      "codeValues": [
+        "example",
+        "balanced"
+      ],
+      "fixtureValues": [],
+      "missingInFixtures": [
+        "example",
+        "balanced"
+      ],
+      "extraInFixtures": [],
+      "coverage": {
+        "covered": 0,
+        "total": 2,
+        "percent": 0
+      }
+    },
+    "status": {
+      "codeValues": [],
+      "fixtureValues": [
+        "COMPLETE",
+        "PENDING"
+      ],
+      "missingInFixtures": [],
+      "extraInFixtures": [
+        "COMPLETE",
+        "PENDING"
+      ],
+      "coverage": {
+        "covered": 0,
+        "total": 0,
+        "percent": 0
+      }
+    },
+    "type": {
+      "codeValues": [],
+      "fixtureValues": [
+        "EXAMPLE"
+      ],
+      "missingInFixtures": [],
+      "extraInFixtures": [
+        "EXAMPLE"
+      ],
+      "coverage": {
+        "covered": 0,
+        "total": 0,
+        "percent": 0
+      }
+    },
+    "details.source": {
+      "codeValues": [],
+      "fixtureValues": [
+        "manual"
+      ],
+      "missingInFixtures": [],
+      "extraInFixtures": [
+        "manual"
+      ],
+      "coverage": {
+        "covered": 0,
+        "total": 0,
+        "percent": 0
+      }
+    },
+    "details.isActive": {
+      "codeValues": [],
+      "fixtureValues": [
+        true
+      ],
+      "missingInFixtures": [],
+      "extraInFixtures": [
+        true
+      ],
+      "coverage": {
+        "covered": 0,
+        "total": 0,
+        "percent": 0
+      }
+    },
+    "payment.type": {
+      "codeValues": [],
+      "fixtureValues": [
+        "COD",
+        "BANK"
+      ],
+      "missingInFixtures": [],
+      "extraInFixtures": [
+        "COD",
+        "BANK"
+      ],
+      "coverage": {
+        "covered": 0,
+        "total": 0,
+        "percent": 0
+      }
+    },
+    "payment.balance": {
+      "codeValues": [],
+      "fixtureValues": [
+        0,
+        100
+      ],
+      "missingInFixtures": [],
+      "extraInFixtures": [
+        0,
+        100
+      ],
+      "coverage": {
+        "covered": 0,
+        "total": 0,
+        "percent": 0
+      }
+    },
+    "payment.isCompleted": {
+      "codeValues": [],
+      "fixtureValues": [
+        false
+      ],
+      "missingInFixtures": [],
+      "extraInFixtures": [
+        false
+      ],
+      "coverage": {
+        "covered": 0,
+        "total": 0,
+        "percent": 0
+      }
+    }
+  }
+}

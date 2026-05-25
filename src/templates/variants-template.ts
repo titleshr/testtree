@@ -1,0 +1,17 @@
+export const variantsTemplate = [
+  {
+    name: 'example_variant_a',
+    purpose: 'Describe what this scenario tests',
+    patch: {
+      status: 'COMPLETE',
+    },
+  },
+  {
+    name: 'example_variant_b',
+    purpose: 'Describe what this scenario tests',
+    patch: {
+      'payment.type': 'BANK',
+      'payment.balance': 100,
+    },
+  },
+];

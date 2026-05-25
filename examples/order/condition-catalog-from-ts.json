@@ -1,0 +1,542 @@
+{
+  "domain": "order",
+  "fields": [
+    {
+      "fieldPath": "order.customerData.addressProvine",
+      "sampleValue": "กทม.",
+      "possibleValues": [
+        "กทม."
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "order.payment.type",
+      "sampleValue": "COD",
+      "possibleValues": [
+        "COD"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "result.device.type",
+      "sampleValue": "mobile",
+      "possibleValues": [
+        "mobile",
+        "tablet"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "order.status",
+      "sampleValue": "PENDING",
+      "possibleValues": [
+        "PENDING",
+        "PRE_PENDING",
+        "COMPLETE",
+        "REMOVE"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "socialNetwork",
+      "sampleValue": "accessToken",
+      "possibleValues": [
+        "accessToken",
+        "refId",
+        "dataSetId",
+        "teamId",
+        "e2a022870be7c"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "expected",
+      "sampleValue": "token_expired",
+      "possibleValues": [
+        "token_expired",
+        "Flash Express (โปรเซริว)",
+        "order123",
+        "TH00001321238",
+        "FLASH",
+        "ไปรษณีย์ไทย (ส่งกับสาขา)",
+        ""
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "tag",
+      "sampleValue": "RESPONSE",
+      "possibleValues": [
+        "RESPONSE"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "purchaseSignalMessenger.status",
+      "sampleValue": "token_expired",
+      "possibleValues": [
+        "token_expired"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "result.status",
+      "sampleValue": "rejected",
+      "possibleValues": [
+        "rejected",
+        "fulfilled"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "createLog",
+      "sampleValue": "product",
+      "possibleValues": [
+        "product"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "msg",
+      "sampleValue": "ok",
+      "possibleValues": [
+        "ok"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "order.channel",
+      "sampleValue": "LINESHOP",
+      "possibleValues": [
+        "LINESHOP",
+        "PINMALL"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "order?.payment?.type",
+      "sampleValue": "BANK",
+      "possibleValues": [
+        "BANK",
+        "COD"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "(orderWithPriceInfo as any).pinmallDetail?.cancelBy",
+      "sampleValue": "ผู้ซื้อ",
+      "possibleValues": [
+        "ผู้ซื้อ"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "orderWithPriceInfo.payment?.type",
+      "sampleValue": "QR",
+      "possibleValues": [
+        "QR"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "orderWithPriceInfo.status",
+      "sampleValue": "PENDING",
+      "possibleValues": [
+        "PENDING",
+        "COMPLETE",
+        "CANCEL"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "orderWithPriceInfo.express?.shippingState?.state",
+      "sampleValue": "4",
+      "possibleValues": [
+        "4",
+        "7",
+        "5",
+        "8"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "mockInputOrder",
+      "sampleValue": "order123",
+      "possibleValues": [
+        "order123",
+        "PENDING",
+        "order456",
+        "COMPLETE",
+        "order789",
+        "order101"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "type",
+      "sampleValue": "CREATE",
+      "possibleValues": [
+        "CREATE",
+        "CANCEL",
+        "INTERNAL"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "p.productType",
+      "sampleValue": "PRODUCT",
+      "possibleValues": [
+        "PRODUCT"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "p.productId",
+      "sampleValue": "p3",
+      "possibleValues": [
+        "p3"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "order.type",
+      "sampleValue": "EXTERNAL",
+      "possibleValues": [
+        "EXTERNAL"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "senderType",
+      "sampleValue": "PRINT_LABEL",
+      "possibleValues": [
+        "PRINT_LABEL",
+        "CALL_COURIER"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "mockSender",
+      "sampleValue": "myorder25342089",
+      "possibleValues": [
+        "myorder25342089",
+        "titleshop",
+        "สหรัตน์ นาที",
+        "0800612534",
+        "jirateep.dev@myorder.ai",
+        "88/222 ม.9",
+        "สุรศักดิ์",
+        "ศรีราชา",
+        "ชลบุรี",
+        "20110"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "mockSocialNetworkSender",
+      "sampleValue": "200/30 ถนนท่าข้าม หมู่ 4",
+      "possibleValues": [
+        "200/30 ถนนท่าข้าม หมู่ 4",
+        "Social Network Shop"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "orderCustomerData",
+      "sampleValue": "example@mail.com",
+      "possibleValues": [
+        "example@mail.com",
+        "comment",
+        "John Doe",
+        "1234567890",
+        "123 Main St",
+        "City",
+        "SubCity",
+        "Province",
+        "12345"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "expectedSenderData",
+      "sampleValue": "200/30 ถนนท่าข้าม หมู่ 4",
+      "possibleValues": [
+        "200/30 ถนนท่าข้าม หมู่ 4"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "data.socialNetworkRefId",
+      "sampleValue": "EXTERNAL",
+      "possibleValues": [
+        "EXTERNAL"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "company",
+      "sampleValue": "FLASH",
+      "possibleValues": [
+        "FLASH",
+        "NINJA",
+        "KERRY",
+        "KERRY_DROP_OFF",
+        "THAI_POST_DROP_OFF"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "shop",
+      "sampleValue": "EXTERNAL",
+      "possibleValues": [
+        "EXTERNAL",
+        "ช่องทางการขายอื่น",
+        "PINMALL"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "mockAccountData",
+      "sampleValue": "63897ee0ddadd8001af6ac3e",
+      "possibleValues": [
+        "63897ee0ddadd8001af6ac3e"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "mockTeamData",
+      "sampleValue": "63897ef4ddadd8001af6ac59",
+      "possibleValues": [
+        "63897ef4ddadd8001af6ac59",
+        "63897ee0ddadd8001af6ac3e"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "mockSocialData1",
+      "sampleValue": "697334033951370",
+      "possibleValues": [
+        "697334033951370",
+        "fb",
+        "url",
+        "FACEBOOK"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "mockSocialData2",
+      "sampleValue": "1569171166",
+      "possibleValues": [
+        "1569171166",
+        "line",
+        "url",
+        "LINE"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "mockLineShopData",
+      "sampleValue": "@1234",
+      "possibleValues": [
+        "@1234",
+        "ls"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "mockPinmallShopData",
+      "sampleValue": "64ab75c8776cb70012d76005",
+      "possibleValues": [
+        "64ab75c8776cb70012d76005",
+        "ls"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "typeof error",
+      "sampleValue": "object",
+      "possibleValues": [
+        "object",
+        "string"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "expressName",
+      "sampleValue": "FLASH",
+      "possibleValues": [
+        "FLASH",
+        "BEST",
+        "THAI_POST",
+        "KERRY",
+        "J&T"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "input",
+      "sampleValue": "6908579f71f573b628046f89",
+      "possibleValues": [
+        "6908579f71f573b628046f89",
+        "ออเดอร์นี้ถูกลบไปแล้ว"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    }
+  ]
+}

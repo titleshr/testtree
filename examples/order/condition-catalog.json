@@ -1,0 +1,92 @@
+{
+  "domain": "order",
+  "fields": [
+    {
+      "fieldPath": "status",
+      "sampleValue": "COMPLETE",
+      "possibleValues": [
+        "COMPLETE",
+        "PENDING"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "type",
+      "sampleValue": "EXAMPLE",
+      "possibleValues": [
+        "EXAMPLE"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "details.source",
+      "sampleValue": "manual",
+      "possibleValues": [
+        "manual"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "details.isActive",
+      "sampleValue": true,
+      "possibleValues": [
+        true
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    },
+    {
+      "fieldPath": "payment.type",
+      "sampleValue": "COD",
+      "possibleValues": [
+        "COD",
+        "BANK"
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "payment.balance",
+      "sampleValue": 0,
+      "possibleValues": [
+        0,
+        100
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": true,
+      "notes": ""
+    },
+    {
+      "fieldPath": "payment.isCompleted",
+      "sampleValue": false,
+      "possibleValues": [
+        false
+      ],
+      "sources": [
+        "fixtures"
+      ],
+      "isConditionField": false,
+      "notes": ""
+    }
+  ]
+}
