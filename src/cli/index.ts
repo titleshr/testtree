@@ -18,6 +18,7 @@ import { scanSchema } from '../core/scan-schema';
 import { scanDb } from '../core/scan-db';
 import { mergeConditions } from '../core/merge-conditions';
 import { scanOpenApi } from '../core/scan-openapi';
+import { scanJsonSchema } from '../core/scan-json-schema';
 
 const program = new Command();
 
@@ -309,6 +310,20 @@ program
   .action((options) => {
     try {
       scanOpenApi({ inputPath: options.input, outPath: options.out });
+    } catch (err) {
+      console.error('Error:', (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('scan-json-schema')
+  .description('Scan a JSON Schema file for enum values, required fields, and validation rules')
+  .requiredOption('--input <path>', 'Path to JSON Schema file (.json)')
+  .requiredOption('--out <path>', 'Output path for json-schema-summary.json')
+  .action((options) => {
+    try {
+      scanJsonSchema({ inputPath: options.input, outPath: options.out });
     } catch (err) {
       console.error('Error:', (err as Error).message);
       process.exit(1);

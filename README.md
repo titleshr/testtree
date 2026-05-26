@@ -537,6 +537,58 @@ testtree scan-openapi \
 
 ---
 
+### `testtree scan-json-schema`
+
+Scan a JSON Schema file to extract enum values, required fields, and validation rules.
+
+```bash
+testtree scan-json-schema --input <path> --out <path>
+```
+
+| Option | Description |
+|---|---|
+| `--input` | Path to JSON Schema file (`.json`) |
+| `--out` | Output path for `json-schema-summary.json` |
+
+**Extracts:**
+- Enum values → rule `"enum"`
+- Required fields → rule `"required"`
+- `minLength` / `maxLength` → rules `"minLength:N"` / `"maxLength:N"`
+- `minimum` / `maximum` → rules `"minimum:N"` / `"maximum:N"`
+- `pattern` → rule `"pattern:<regex>"`
+- Nested property paths (e.g. `payment.type`)
+- `$ref` via `$defs` and `definitions`
+- `allOf` / `oneOf` / `anyOf` subschemas
+
+**Usage:**
+
+```bash
+testtree scan-json-schema \
+  --input ./schema/order.schema.json \
+  --out ./testtree/json-schema-summary.json
+```
+
+**Example output (`json-schema-summary.json`):**
+```json
+{
+  "fields": {
+    "status": {
+      "count": 3,
+      "values": ["PENDING", "COMPLETE", "CANCEL"],
+      "rules": ["enum", "required"]
+    },
+    "amount": {
+      "count": 0,
+      "values": [],
+      "rules": ["minimum:0", "maximum:9999"]
+    }
+  },
+  "meta": { "source": "json-schema" }
+}
+```
+
+---
+
 ### `testtree show-summary`
 
 Display any summary JSON file in human-readable plain text. Works with `ts-summary.json`, `code-summary.json`, and `fixture-summary.json`.

@@ -18,7 +18,8 @@
 - Phase 11 — Database Scanner
 - Phase 12 — Multi-source Condition Merger
 - Phase 13 — OpenAPI Scanner
+- Phase 14 — JSON Schema Scanner
 
 ## Current Target
 
-Phase 14 — JSON Schema Scanner
+Phase 15 — Scenario Planner
