@@ -10,7 +10,7 @@ interface SuggestedVariant {
 
 interface SuggestVariantsOptions {
   coveragePath: string;
-  outPath: string;
+  outPath?: string;
 }
 
 function toSnakeCase(text: string): string {
@@ -40,6 +40,15 @@ export function suggestVariants({ coveragePath, outPath }: SuggestVariantsOption
     }
   }
 
-  writeJson(outPath, suggested);
-  console.log(`Suggested ${suggested.length} variant(s): ${outPath}`);
+  if (outPath) {
+    writeJson(outPath, suggested);
+    console.log(`Suggested ${suggested.length} variant(s): ${outPath}`);
+  } else if (suggested.length === 0) {
+    console.log('No missing variants suggested.');
+  } else {
+    console.log(`\nSuggested ${suggested.length} variant(s):`);
+    for (const v of suggested) {
+      console.log(`  • ${v.name} — ${v.purpose}`);
+    }
+  }
 }

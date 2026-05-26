@@ -6,6 +6,7 @@ import type { CoverageSummary, CoverageField } from '../types/coverage-summary';
 interface MergeSummariesOptions {
   codeSummaryPath: string;
   fixtureSummaryPath: string;
+  dbSummaryPath?: string;
   outPath: string;
 }
 
@@ -34,13 +35,33 @@ function computeCoverageField(codeValues: unknown[], fixtureValues: unknown[]): 
 }
 
 export function mergeSummaries(options: MergeSummariesOptions): void {
-  const { codeSummaryPath, fixtureSummaryPath, outPath } = options;
+  const { codeSummaryPath, fixtureSummaryPath, dbSummaryPath, outPath } = options;
 
   const codeSummary = readJson(codeSummaryPath) as FixtureSummary;
   const fixtureSummary = readJson(fixtureSummaryPath) as FixtureSummary;
 
-  const codeFields = codeSummary?.fields ?? {};
+  // Clone to avoid mutating the parsed object
+  const codeFields: FixtureSummary['fields'] = JSON.parse(JSON.stringify(codeSummary?.fields ?? {}));
   const fixtureFields = fixtureSummary?.fields ?? {};
+
+  // Merge db values into code values so db-discovered values are also covered by fixtures
+  if (dbSummaryPath) {
+    try {
+      const dbSummary = readJson(dbSummaryPath) as FixtureSummary;
+      for (const [fieldPath, fieldData] of Object.entries(dbSummary?.fields ?? {})) {
+        if (!codeFields[fieldPath]) codeFields[fieldPath] = { count: 0, values: [] };
+        const existing = new Set(codeFields[fieldPath].values.map((v) => JSON.stringify(v)));
+        for (const v of fieldData.values) {
+          if (!existing.has(JSON.stringify(v))) {
+            codeFields[fieldPath].values.push(v);
+            existing.add(JSON.stringify(v));
+          }
+        }
+      }
+    } catch {
+      // skip if db summary is unavailable
+    }
+  }
 
   const allFieldPaths = new Set([...Object.keys(codeFields), ...Object.keys(fixtureFields)]);
 

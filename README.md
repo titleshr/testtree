@@ -809,20 +809,22 @@ Use `--force` to overwrite existing files.
 
 ### `testtree flow`
 
-Runs the full 6-step workflow using `testtree.config.json` (or defaults if no config file is present):
+Runs the full workflow using `testtree.config.json` (or defaults if no config file is present):
 
 ```bash
 testtree flow [--config <path>]
 ```
 
-Steps:
+Steps (7 without db, 8 with db):
 
 1. `scan-ts` — scan your project for conditions
 2. `summarize-conditions` — group conditions by field
 3. `catalog` — generate condition catalog
-4. `generate` — generate fixtures from base + variants
-5. `inspect` — summarize fixture field values
-6. `merge-summary` — compare code conditions vs fixture coverage
+4. `scan-db` *(optional — only if `db` is set in config)* — scan MongoDB for distinct field values
+5. `generate` — generate fixtures from base + variants
+6. `inspect` — summarize fixture field values
+7. `merge-summary` — compare code conditions (+ db values when available) vs fixture coverage
+8. `suggest-variants` — print missing variants to console
 
 Output files:
 
@@ -831,6 +833,7 @@ testtree/
   ts-conditions.json
   ts-summary.json
   condition-catalog.json
+  db-summary.json        ← only when db is configured
   fixtures/
   fixture-summary.json
   coverage-summary.json
@@ -848,6 +851,27 @@ testtree/
   "fixtures": "./testtree/fixtures"
 }
 ```
+
+**Optional — include MongoDB scanning in the flow:**
+
+```json
+{
+  "project": "./src",
+  "outputDir": "./testtree",
+  "domain": "order",
+  "base": "./testtree/base-template.json",
+  "variants": "./testtree/variants.json",
+  "fixtures": "./testtree/fixtures",
+  "db": {
+    "uri": "mongodb+srv://user:pass@cluster.mongodb.net",
+    "database": "mydb",
+    "collection": "orders",
+    "fields": ["status", "payment.type", "basket.products.0.isFree"]
+  }
+}
+```
+
+When `db` is configured, `flow` will run `scan-db` automatically and include the discovered values in the coverage comparison — so any value found in the database that is not covered by a fixture will appear in `missingInFixtures`.
 
 Config resolution priority:
 1. CLI options (`--config`) override everything
@@ -880,11 +904,12 @@ npx testtree generate-template \
 npx testtree flow
 # Produces: ts-conditions, ts-summary, condition-catalog,
 #           fixtures/, fixture-summary, coverage-summary
+# Also prints suggested variants at the end
 
-# 6. See what conditions are missing from fixtures
+# 6. (Optional) See full coverage detail
 npx testtree show-summary --summary ./testtree/coverage-summary.json
 
-# 7. Get suggested variants for missing values
+# 7. (Optional) Save suggested variants to a file for reference
 npx testtree suggest-variants \
   --coverage ./testtree/coverage-summary.json \
   --out ./testtree/suggested-variants.json

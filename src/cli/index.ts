@@ -185,13 +185,11 @@ program
   .description('Run the full TestTree workflow using testtree.config.json or defaults')
   .option('--config <path>', 'Path to testtree.config.json', 'testtree.config.json')
   .action((options) => {
-    try {
-      const config = loadConfig(options.config);
-      runFlow(config);
-    } catch (err) {
-      console.error('Error:', (err as Error).message);
+    const config = loadConfig(options.config);
+    runFlow(config).catch((err: Error) => {
+      console.error('Error:', err.message);
       process.exit(1);
-    }
+    });
   });
 
 program

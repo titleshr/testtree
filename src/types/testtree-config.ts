@@ -1,3 +1,10 @@
+export interface DbConfig {
+  uri: string;
+  database: string;
+  collection: string;
+  fields: string[];
+}
+
 export interface TestTreeConfig {
   project?: string;
   outputDir?: string;
@@ -5,6 +12,7 @@ export interface TestTreeConfig {
   base?: string;
   variants?: string;
   fixtures?: string;
+  db?: DbConfig;
 }
 
 export interface ResolvedConfig {
@@ -14,4 +22,5 @@ export interface ResolvedConfig {
   base: string;
   variants: string;
   fixtures: string;
+  db?: DbConfig;
 }

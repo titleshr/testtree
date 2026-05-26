@@ -124,4 +124,76 @@ describe('mergeSummaries', () => {
     const result = JSON.parse(readFileSync(OUT_PATH, 'utf-8'));
     expect(result.fields).toEqual({});
   });
+
+  it('merges db values into code values when dbSummaryPath is provided', () => {
+    const dbSummaryPath = join(TMP_DIR, 'db-summary.json');
+    writeJson(CODE_SUMMARY_PATH, {
+      fields: { status: { count: 1, values: ['PENDING'] } },
+    });
+    writeJson(FIXTURE_SUMMARY_PATH, {
+      fields: { status: { count: 1, values: ['PENDING'] } },
+    });
+    writeJson(dbSummaryPath, {
+      fields: { status: { count: 2, values: ['COMPLETE', 'CANCEL'] } },
+    });
+
+    mergeSummaries({
+      codeSummaryPath: CODE_SUMMARY_PATH,
+      fixtureSummaryPath: FIXTURE_SUMMARY_PATH,
+      dbSummaryPath,
+      outPath: OUT_PATH,
+    });
+
+    const result = JSON.parse(readFileSync(OUT_PATH, 'utf-8'));
+    const field = result.fields.status;
+    // Code + db values: PENDING, COMPLETE, CANCEL
+    expect(field.codeValues).toContain('PENDING');
+    expect(field.codeValues).toContain('COMPLETE');
+    expect(field.codeValues).toContain('CANCEL');
+    // Fixture only has PENDING — so COMPLETE and CANCEL are missing
+    expect(field.missingInFixtures).toContain('COMPLETE');
+    expect(field.missingInFixtures).toContain('CANCEL');
+  });
+
+  it('deduplicates values that appear in both code and db', () => {
+    const dbSummaryPath = join(TMP_DIR, 'db-summary.json');
+    writeJson(CODE_SUMMARY_PATH, {
+      fields: { status: { count: 2, values: ['PENDING', 'COMPLETE'] } },
+    });
+    writeJson(FIXTURE_SUMMARY_PATH, { fields: {} });
+    writeJson(dbSummaryPath, {
+      fields: { status: { count: 2, values: ['COMPLETE', 'CANCEL'] } },
+    });
+
+    mergeSummaries({
+      codeSummaryPath: CODE_SUMMARY_PATH,
+      fixtureSummaryPath: FIXTURE_SUMMARY_PATH,
+      dbSummaryPath,
+      outPath: OUT_PATH,
+    });
+
+    const result = JSON.parse(readFileSync(OUT_PATH, 'utf-8'));
+    const allValues = result.fields.status.codeValues;
+    expect(allValues.filter((v: string) => v === 'COMPLETE')).toHaveLength(1);
+    expect(allValues).toHaveLength(3); // PENDING, COMPLETE, CANCEL
+  });
+
+  it('skips dbSummaryPath gracefully when file does not exist', () => {
+    writeJson(CODE_SUMMARY_PATH, {
+      fields: { status: { count: 1, values: ['PENDING'] } },
+    });
+    writeJson(FIXTURE_SUMMARY_PATH, { fields: {} });
+
+    expect(() =>
+      mergeSummaries({
+        codeSummaryPath: CODE_SUMMARY_PATH,
+        fixtureSummaryPath: FIXTURE_SUMMARY_PATH,
+        dbSummaryPath: join(TMP_DIR, 'nonexistent.json'),
+        outPath: OUT_PATH,
+      })
+    ).not.toThrow();
+
+    const result = JSON.parse(readFileSync(OUT_PATH, 'utf-8'));
+    expect(result.fields.status.codeValues).toEqual(['PENDING']);
+  });
 });

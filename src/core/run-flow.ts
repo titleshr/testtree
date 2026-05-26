@@ -6,9 +6,11 @@ import { generateConditionCatalog } from './generate-condition-catalog';
 import { generateFixtures } from './generate-fixtures';
 import { inspectFixtures } from './inspect-fixtures';
 import { mergeSummaries } from './merge-summaries';
+import { scanDb } from './scan-db';
+import { suggestVariants } from './suggest-variants';
 import type { ResolvedConfig } from '../types/testtree-config';
 
-export function runFlow(config: ResolvedConfig): void {
+export async function runFlow(config: ResolvedConfig): Promise<void> {
   const { project, outputDir, domain, base, variants, fixtures } = config;
 
   if (!existsSync(base)) {
@@ -23,25 +25,49 @@ export function runFlow(config: ResolvedConfig): void {
   const catalogPath = join(outputDir, 'condition-catalog.json');
   const fixtureSummaryPath = join(outputDir, 'fixture-summary.json');
   const coveragePath = join(outputDir, 'coverage-summary.json');
+  const dbSummaryPath = config.db ? join(outputDir, 'db-summary.json') : undefined;
 
-  console.log('[1/6] scan-ts...');
+  const totalSteps = config.db ? 8 : 7;
+  let step = 0;
+  const next = (label: string) => `[${++step}/${totalSteps}] ${label}...`;
+
+  console.log(next('scan-ts'));
   scanTypescript({ projectDir: project, outPath: conditionsPath });
 
-  console.log('[2/6] summarize-conditions...');
+  console.log(next('summarize-conditions'));
   summarizeConditions({ conditionsPath, outPath: summaryPath });
 
-  console.log('[3/6] catalog...');
+  console.log(next('catalog'));
   generateConditionCatalog({ summaryPath, outPath: catalogPath, domain });
 
-  console.log('[4/6] generate...');
+  if (config.db) {
+    console.log(next('scan-db'));
+    await scanDb({
+      uri: config.db.uri,
+      database: config.db.database,
+      collection: config.db.collection,
+      fields: config.db.fields,
+      outPath: dbSummaryPath!,
+    });
+  }
+
+  console.log(next('generate'));
   generateFixtures({ basePath: base, variantsPath: variants, outDir: fixtures });
 
-  console.log('[5/6] inspect...');
+  console.log(next('inspect'));
   inspectFixtures({ fixturesDir: fixtures, outPath: fixtureSummaryPath });
 
-  console.log('[6/6] merge-summary...');
-  mergeSummaries({ codeSummaryPath: summaryPath, fixtureSummaryPath, outPath: coveragePath });
+  console.log(next('merge-summary'));
+  mergeSummaries({
+    codeSummaryPath: summaryPath,
+    fixtureSummaryPath,
+    outPath: coveragePath,
+    ...(dbSummaryPath && { dbSummaryPath }),
+  });
 
-  console.log('Flow complete.');
+  console.log(next('suggest-variants'));
+  suggestVariants({ coveragePath });
+
+  console.log('\nFlow complete.');
   console.log(`Output: ${outputDir}`);
 }

@@ -35,12 +35,14 @@ inspect                                  summarize-conditions
     │                                             │
     ▼                                             ▼
 fixture-summary.json ──────────── merge-summary ──► coverage-summary.json
-                                                  │
-                                                  ▼
-                                         suggest-variants
-                                                  │
-                                                  ▼
-                                      suggested-variants.json
+                                       ▲                  │
+                                 (+ db-summary,           ▼
+                                  if db configured)  suggest-variants
+                                                          │
+                                                          ▼
+                                              print to console (in flow)
+                                              or suggested-variants.json
+                                              (via standalone command)
 ```
 
 ---
@@ -205,7 +207,9 @@ payment.type:
 
 Naming rule: `payment.type=QR` → `payment_type_qr_case`
 
-**Output:** `suggested-variants.json` (draft — ไม่ overwrite variants.json ที่มีอยู่)
+**Output modes:**
+- ถ้าระบุ `--out` → เขียน `suggested-variants.json` (draft — ไม่ overwrite `variants.json` ที่มีอยู่)
+- ถ้าไม่ระบุ `--out` (เช่นเรียกจาก `flow`) → print ผลลัพธ์ออก console เท่านั้น
 
 ---
 
@@ -273,7 +277,7 @@ Naming rule: `payment.type=QR` → `payment_type_qr_case`
 | `fixture-summary.ts` | `{ fields: { [path]: { count, values } } }` |
 | `coverage-summary.ts` | `{ fields: { [path]: { codeValues, fixtureValues, missingInFixtures, ... } } }` |
 | `code-condition.ts` | shape ของ condition ที่ scanner หาได้: `fieldPath`, `operator`, `value`, `file`, `line` |
-| `testtree-config.ts` | shape ของ `testtree.config.json` + `ResolvedConfig` |
+| `testtree-config.ts` | shape ของ `testtree.config.json` + `ResolvedConfig` รองรับ optional `db` field (`DbConfig`: uri, database, collection, fields) |
 
 ---
 
@@ -289,13 +293,13 @@ Naming rule: `payment.type=QR` → `payment_type_qr_case`
 | `scan-schema` | source dir | `schema-summary.json` |
 | `scan-db` | MongoDB URI + fields | `db-summary.json` |
 | `summarize-conditions` | `*-conditions.json` | `*-summary.json` |
-| `merge-summary` | code-summary + fixture-summary | `coverage-summary.json` |
-| `suggest-variants` | `coverage-summary.json` | `suggested-variants.json` |
+| `merge-summary` | code-summary + fixture-summary (+ optional db-summary) | `coverage-summary.json` |
+| `suggest-variants` | `coverage-summary.json` | `suggested-variants.json` หรือ print เท่านั้น |
 | `catalog` | summary JSON | `condition-catalog.json` |
 | `show-summary` | summary JSON | plain text (terminal / file) |
 | `init` | — | starter workspace files |
 | `init-config` | — | `testtree.config.json` |
-| `flow` | `testtree.config.json` | runs 6 steps end-to-end |
+| `flow` | `testtree.config.json` | runs 7–8 steps end-to-end (8 ถ้ามี db config) |
 
 ---
 
@@ -313,7 +317,7 @@ Naming rule: `payment.type=QR` → `payment_type_qr_case`
 ## การ test
 
 - ทุก module มี unit test แยก ใน `tests/`
-- รวม **122 tests**, **17 test files**
+- รวม **137 tests**, **18 test files**
 - scan-db ใช้ injectable `createReader` → ไม่ต้องมี MongoDB จริงตอน test
 - scan-typescript / scan-schema เขียนไฟล์ temp ลง `__tmp_*` แล้วลบทิ้งหลัง test
 
