@@ -321,6 +321,17 @@ testtree scan-db \
   --out ./testtree/db-summary.json
 ```
 
+**Terminal output during scan:**
+
+```
+Connecting to "mydb.orders"...
+Connected. Scanning 3 field(s)...
+  scanning: status... 3 value(s)
+  scanning: payment.type... 2 value(s)
+  scanning: channel... 4 value(s)
+Done. Written to ./testtree/db-summary.json
+```
+
 **Example output (`db-summary.json`):**
 ```json
 {

@@ -34,17 +34,21 @@ export async function scanDb({
   outPath,
   createReader = createDbReader,
 }: ScanDbOptions): Promise<void> {
+  console.log(`Connecting to "${database}.${collection}"...`);
   const reader = await createReader(uri, database, collection);
+  console.log(`Connected. Scanning ${fields.length} field(s)...`);
 
   try {
     const result: Record<string, DbField> = {};
 
     for (const field of fields) {
+      process.stdout.write(`  scanning: ${field}... `);
       const values = await reader.distinct(field);
       result[field] = {
         count: values.length,
         values,
       };
+      console.log(`${values.length} value(s)`);
     }
 
     const summary: DbSummary = {
@@ -58,9 +62,7 @@ export async function scanDb({
 
     writeJson(outPath, summary);
     // Do NOT log the URI — it may contain credentials
-    console.log(
-      `DB-scanned "${database}.${collection}" (${fields.length} field(s)) written to ${outPath}`
-    );
+    console.log(`Done. Written to ${outPath}`);
   } finally {
     await reader.close();
   }
