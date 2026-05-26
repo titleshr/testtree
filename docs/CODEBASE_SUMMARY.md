@@ -37,8 +37,8 @@ inspect                                  summarize-conditions
 fixture-summary.json ──────────── merge-summary ──► coverage-summary.json
                                        ▲                  │
                                  (+ db-summary,           ▼
-                                  if db configured)  suggest-variants
-                                                          │
+                                  filtered to        suggest-variants
+                                  db.fields)              │
                                                           ▼
                                               print to console (in flow)
                                               or suggested-variants.json
@@ -294,8 +294,8 @@ Naming rule: `payment.type=QR` → `payment_type_qr_case`
 | `scan-schema` | source dir | `schema-summary.json` |
 | `scan-db` | MongoDB URI + fields | `db-summary.json` |
 | `summarize-conditions` | `*-conditions.json` | `*-summary.json` |
-| `merge-summary` | code-summary + fixture-summary (+ optional db-summary) | `coverage-summary.json` |
-| `suggest-variants` | `coverage-summary.json` | `suggested-variants.json` หรือ print เท่านั้น |
+| `merge-summary` | code-summary + fixture-summary (+ optional db-summary, + optional fields filter) | `coverage-summary.json` |
+| `suggest-variants` | `coverage-summary.json` | `suggested-variants.json` หรือ print เท่านั้น รองรับ `--fields` filter |
 | `catalog` | summary JSON | `condition-catalog.json` |
 | `show-summary` | summary JSON | plain text (terminal / file) |
 | `init` | — | starter workspace files |
@@ -318,7 +318,7 @@ Naming rule: `payment.type=QR` → `payment_type_qr_case`
 ## การ test
 
 - ทุก module มี unit test แยก ใน `tests/`
-- รวม **148 tests**, **18 test files**
+- รวม **154 tests**, **18 test files**
 - scan-db ใช้ injectable `createReader` → ไม่ต้องมี MongoDB จริงตอน test
 - scan-typescript / scan-schema เขียนไฟล์ temp ลง `__tmp_*` แล้วลบทิ้งหลัง test
 

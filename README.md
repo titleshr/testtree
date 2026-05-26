@@ -823,8 +823,8 @@ Steps (7 without db, 8 with db):
 4. `scan-db` *(optional — only if `db` is set in config)* — scan MongoDB for distinct field values
 5. `generate` — generate fixtures from base + variants
 6. `inspect` — summarize fixture field values
-7. `merge-summary` — compare code conditions (+ db values when available) vs fixture coverage
-8. `suggest-variants` — print missing variants to console
+7. `merge-summary` — compare code + db values vs fixture coverage, scoped to `db.fields` when db is configured
+8. `suggest-variants` — print missing variants to console (scoped to `db.fields`)
 
 Output files:
 
@@ -871,7 +871,12 @@ testtree/
 }
 ```
 
-When `db` is configured, `flow` will run `scan-db` automatically and include the discovered values in the coverage comparison — so any value found in the database that is not covered by a fixture will appear in `missingInFixtures`.
+When `db` is configured, `flow` will:
+- run `scan-db` automatically and merge db values with code-scan values
+- scope `coverage-summary.json` to only the fields listed in `db.fields` — so `scan-ts` values from unrelated fields are excluded
+- print only suggestions for those fields at the end
+
+This means `db.fields` acts as the single source of truth for which fields matter — both the code side and the db side are filtered to the same list, and the suggested patches will use the exact key paths that match the document structure.
 
 #### Environment variable interpolation
 
