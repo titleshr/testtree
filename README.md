@@ -288,6 +288,11 @@ testtree merge-summary --code-summary ./ts-summary.json --fixture-summary ./fixt
 
 Scan a MongoDB collection for distinct field values. **Read-only** — never writes to the database.
 
+> **Prerequisite:** `scan-db` requires two packages — `mongodb` and `socks`. The `socks` package is needed by the MongoDB driver when connecting via DNS SRV (`mongodb+srv://`) or through a proxy. Install both before running:
+> ```bash
+> npm install mongodb socks
+> ```
+
 ```bash
 testtree scan-db \
   --uri "$MONGO_URI" \
@@ -341,6 +346,7 @@ testtree scan-db \
 > - `scan-db` is **read-only**. It only runs `distinct` queries — no insert, update, delete, or index operations.
 > - The MongoDB URI is **never logged**. Always pass it via an environment variable (`$MONGO_URI`), never hardcode it.
 > - Dotted field paths (e.g. `payment.type`) are supported — MongoDB `distinct` handles nested fields natively.
+> - If you see `Error: Optional module 'socks' not found`, run `npm install socks` — the MongoDB driver requires it for `mongodb+srv://` URIs and proxy connections.
 
 ---
 
