@@ -74,6 +74,17 @@ describe('generateFixtures', () => {
     ).toThrow();
   });
 
+  it('throws when two variants share the same name', () => {
+    const duplicateVariants = [
+      { name: 'channel_facebook_case', purpose: 'uppercase', patch: { channel: 'FACEBOOK' } },
+      { name: 'channel_facebook_case', purpose: 'lowercase', patch: { channel: 'facebook' } },
+    ];
+    writeJson(VARIANTS_PATH, duplicateVariants);
+    expect(() =>
+      generateFixtures({ basePath: BASE_PATH, variantsPath: VARIANTS_PATH, outDir: OUT_DIR })
+    ).toThrow('Duplicate variant name "channel_facebook_case"');
+  });
+
   it('creates the output directory if it does not exist', () => {
     expect(existsSync(OUT_DIR)).toBe(false);
     generateFixtures({ basePath: BASE_PATH, variantsPath: VARIANTS_PATH, outDir: OUT_DIR });

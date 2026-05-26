@@ -66,6 +66,17 @@ export function suggestVariants({ coveragePath, outPath, fields, dbSummaryPath }
     }
   }
 
+  // Deduplicate names: when two values normalize to the same name, append _2, _3, ...
+  const nameSeq = new Map<string, number>();
+  for (const v of suggested) {
+    const base = v.name;
+    const seq = (nameSeq.get(base) ?? 0) + 1;
+    nameSeq.set(base, seq);
+    if (seq > 1) {
+      v.name = `${base}_${seq}`;
+    }
+  }
+
   if (suggested.length === 0) {
     console.log('No missing variants suggested.');
   } else {

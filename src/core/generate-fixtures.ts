@@ -19,6 +19,14 @@ export function generateFixtures(options: GeneratorOptions): void {
 
   const variants = result.data;
 
+  const seenNames = new Set<string>();
+  for (const variant of variants) {
+    if (seenNames.has(variant.name)) {
+      throw new Error(`Duplicate variant name "${variant.name}" in variants.json`);
+    }
+    seenNames.add(variant.name);
+  }
+
   mkdirSync(outDir, { recursive: true });
 
   for (const variant of variants) {

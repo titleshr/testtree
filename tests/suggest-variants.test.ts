@@ -153,6 +153,30 @@ describe('suggestVariants', () => {
     expect(boolVariant?.patch['payment.isCompleted']).toBe(false);
   });
 
+  it('deduplicates names when two values normalize to the same snake_case', () => {
+    writeCoverage({
+      fields: {
+        channel: {
+          codeValues: ['FACEBOOK', 'facebook'],
+          fixtureValues: [],
+          missingInFixtures: ['FACEBOOK', 'facebook'],
+          extraInFixtures: [],
+          coverage: { covered: 0, total: 2, percent: 0 },
+        },
+      },
+    });
+
+    suggestVariants({ coveragePath: COVERAGE_PATH, outPath: OUT_PATH });
+
+    const result = readJson(OUT_PATH) as { name: string; patch: Record<string, unknown> }[];
+    expect(result).toHaveLength(2);
+    const names = result.map((v) => v.name);
+    expect(names[0]).toBe('channel_facebook_case');
+    expect(names[1]).toBe('channel_facebook_case_2');
+    expect(result[0].patch['channel']).toBe('FACEBOOK');
+    expect(result[1].patch['channel']).toBe('facebook');
+  });
+
   it('uses correct snake_case naming for dotted field paths', () => {
     writeCoverage({
       fields: {
