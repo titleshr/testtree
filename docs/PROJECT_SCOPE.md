@@ -1,7 +1,7 @@
-````md id="vz8wxa"
+````md
 # TestTree Project Scope
 
-Version: Phase 1 → Phase 7  
+Version: Phase 1 → Phase 12  
 Project Type: Open Source CLI Tool  
 Language: TypeScript  
 Runtime: Node.js
@@ -20,20 +20,19 @@ TestTree — Grow scenario-based fixtures from base data.
 
 # Vision
 
-TestTree is an open-source CLI tool that helps developers create maintainable test data and fixtures using:
+TestTree is an open-source CLI tool for discovering data conditions and generating maintainable test fixtures.
+
+The goal is to help developers and QA teams answer questions like:
 
 ```text
-base-template + variants + condition discovery
+แต่ละ field มี value อะไรได้บ้าง?
+value ไหนเจอจาก code?
+value ไหนเจอจาก schema?
+value ไหนเจอจาก database?
+fixture ที่มีอยู่ครอบคลุม condition เหล่านี้ครบไหม?
 ````
 
-The project aims to reduce:
-
-* duplicated fixture files
-* manual test data preparation
-* hidden data conditions in source code
-* hard-to-maintain JSON test fixtures
-
-TestTree should work with any JSON-like structure:
+TestTree should work with any JSON-like data structure, such as:
 
 * orders
 * users
@@ -44,7 +43,7 @@ TestTree should work with any JSON-like structure:
 * API payloads
 * database documents
 
-The project must NOT depend on any specific business domain.
+TestTree must be domain-agnostic and must not depend on any specific business system.
 
 ---
 
@@ -52,7 +51,7 @@ The project must NOT depend on any specific business domain.
 
 Traditional fixture management:
 
-```text id="h4qzjq"
+```text
 order_complete.json
 order_pending.json
 order_cancelled.json
@@ -64,48 +63,96 @@ Problems:
 * duplicated data
 * difficult maintenance
 * inconsistent structure
-* hard to scale
+* hidden business conditions
+* unclear test coverage
 
 TestTree philosophy:
 
-```text id="52epdb"
-base-template.json
-+ variants.json
-+ condition catalog
-+ scenario plan
+```text
+sample data
++ source code conditions
++ schema conditions
++ database values
++ base template
++ variants
 → generated fixtures
+→ coverage summary
+→ unified condition catalog
 ```
 
 Benefits:
 
-* single source of truth
-* reusable base data
-* smaller fixture patches
-* easier maintenance
-* easier scenario management
+* reduce duplicated fixture files
+* discover hidden field values
+* see missing fixture coverage
+* create reusable base data
+* create smaller variant patches
+* build a condition catalog for any domain
 
 ---
 
 # Core Workflow
 
-```text id="uxn2kk"
-Sample Data
-    ↓
-Condition Discovery
-    ↓
-Condition Catalog
-    ↓
-Scenario Plan
-    ↓
-Base Template
-    ↓
-Variants
-    ↓
-Generated Fixtures
-    ↓
-Fixture Summary
-    ↓
-Coverage Summary
+```text
+sample.json
+  ↓
+generate-template
+  ↓
+base-template.json
+
+source code
+  ↓
+scan-ts / scan-code
+  ↓
+ts-summary.json / code-summary.json
+
+schema / DTO
+  ↓
+scan-schema
+  ↓
+schema-summary.json
+
+database
+  ↓
+scan-db
+  ↓
+db-summary.json
+
+summaries
+  ↓
+merge-conditions
+  ↓
+unified-condition-catalog.json
+
+coverage
+  ↓
+suggest-variants
+  ↓
+variants.json / suggested-variants.json
+
+base-template + variants
+  ↓
+generate
+  ↓
+fixtures/
+
+fixtures
+  ↓
+inspect
+  ↓
+fixture-summary.json
+
+code summary + fixture summary
+  ↓
+merge-summary
+  ↓
+coverage-summary.json
+
+summary
+  ↓
+show-summary
+  ↓
+readable plain text output
 ```
 
 ---
@@ -118,11 +165,13 @@ TestTree should be:
 * JSON-first
 * file-based
 * offline-friendly
-* AI-assisted in future
 * beginner-friendly
-* extensible
-* maintainable
 * domain-agnostic
+* deterministic
+* easy to test
+* easy to extend
+
+Future versions may support AI-assisted workflows, but AI is out of scope for Phase 1–12.
 
 ---
 
@@ -136,20 +185,19 @@ TestTree should support:
 * MongoDB-like documents
 * API responses
 * DTO-like structures
+* TypeScript enum-like values
+* schema-derived values
+* database distinct values
 
 ---
 
-# Out of Scope (Until Future Phases)
+# Out of Scope Until Future Phases
 
-DO NOT implement yet:
+Do NOT implement yet:
 
 * AI API integration
 * OpenAI integration
 * Claude integration
-* database connection
-* MongoDB integration
-* Prisma integration
-* ORM integration
 * frontend UI
 * web dashboard
 * authentication
@@ -160,8 +208,10 @@ DO NOT implement yet:
 * plugin marketplace
 * distributed processing
 * automatic business meaning inference
-* automatic scenario generation
-* automatic DB seeding
+* automatic DB write/seed
+* automatic production data mutation
+
+Database scanning is read-only only.
 
 ---
 
@@ -181,7 +231,8 @@ Libraries:
 * vitest
 * tsx
 * fast-glob
-* ts-morph (Phase 5)
+* ts-morph
+* mongodb
 
 Package manager:
 
@@ -192,7 +243,7 @@ Package manager:
 
 # Recommended Project Structure
 
-```text id="cm0zyf"
+```text
 testtree/
   docs/
     PROJECT_SCOPE.md
@@ -216,6 +267,12 @@ testtree/
       load-config.ts
       init-config.ts
       run-flow.ts
+      show-summary.ts
+      generate-template.ts
+      suggest-variants.ts
+      scan-schema.ts
+      scan-db.ts
+      merge-conditions.ts
       read-json.ts
       write-json.ts
       find-source-files.ts
@@ -235,6 +292,9 @@ testtree/
       code-condition.ts
       coverage-summary.ts
       testtree-config.ts
+      schema-summary.ts
+      db-summary.ts
+      unified-condition-catalog.ts
 
     validation/
       variant-schema.ts
@@ -245,17 +305,20 @@ testtree/
   examples/
     order/
       sample.json
+      base-template.json
+      variants.json
+      suggested-variants.json
+      fixtures/
       fixture-summary.json
       code-conditions.json
       code-summary.json
       ts-conditions.json
       ts-summary.json
+      schema-summary.json
+      db-summary.json
       coverage-summary.json
       condition-catalog.json
-      scenario-plan.json
-      base-template.json
-      variants.json
-      fixtures/
+      unified-condition-catalog.json
 
   tests/
     apply-patch.test.ts
@@ -270,6 +333,12 @@ testtree/
     load-config.test.ts
     init-config.test.ts
     run-flow.test.ts
+    show-summary.test.ts
+    generate-template.test.ts
+    suggest-variants.test.ts
+    scan-schema.test.ts
+    scan-db.test.ts
+    merge-conditions.test.ts
 
   README.md
   package.json
@@ -317,49 +386,320 @@ Fixture Coverage / Merge Summary
 
 Project-local Usage & Config
 
+## Phase 7.5
+
+Show Summary
+
+## Phase 8
+
+Generate Base Template From Sample
+
+## Phase 9
+
+Suggest Variants From Coverage
+
+## Phase 10
+
+DTO / Schema Scanner
+
+## Phase 11
+
+Database Scanner
+
+## Phase 12
+
+Multi-source Condition Merger
+
 ---
 
 # CLI Commands
 
-```bash id="uzjtnz"
+```bash
 testtree generate
-```
-
-```bash id="rkkdwl"
 testtree init
-```
-
-```bash id="jlwmgi"
 testtree inspect
-```
-
-```bash id="z7e0n0"
 testtree catalog
-```
-
-```bash id="mkgjlwm"
 testtree scan-code
-```
-
-```bash id="hvb4ys"
 testtree scan-ts
-```
-
-```bash id="w3aj3w"
 testtree summarize-conditions
-```
-
-```bash id="s9t3hm"
 testtree merge-summary
-```
-
-```bash id="y10n0h"
 testtree init-config
+testtree flow
+testtree show-summary
+testtree generate-template
+testtree suggest-variants
+testtree scan-schema
+testtree scan-db
+testtree merge-conditions
 ```
 
-```bash id="x6t24m"
+---
+
+# Phase Responsibility Summary
+
+## Phase 1 — Fixture Generator
+
+Generate fixture files from:
+
+```text
+base-template.json + variants.json
+```
+
+Output:
+
+```text
+fixtures/*.json
+```
+
+---
+
+## Phase 2 — Workspace Init
+
+Create starter workflow files:
+
+```text
+sample.json
+condition-catalog.json
+scenario-plan.json
+base-template.json
+variants.json
+fixtures/
+```
+
+---
+
+## Phase 2.5 — Inspect Fixtures
+
+Read generated fixtures and produce:
+
+```text
+fixture-summary.json
+```
+
+This summary tells which field values are covered by current fixtures.
+
+---
+
+## Phase 3 — Condition Catalog Generator
+
+Convert summary file into:
+
+```text
+condition-catalog.json
+```
+
+This is a human-readable catalog of fields and possible values.
+
+---
+
+## Phase 4 — Text Code Scanner
+
+Scan source code using text/regex patterns.
+
+Output:
+
+```text
+code-conditions.json
+```
+
+This is best-effort and may miss complex logic.
+
+---
+
+## Phase 5 — TypeScript AST Scanner
+
+Scan TypeScript with `ts-morph`.
+
+Output:
+
+```text
+ts-conditions.json
+```
+
+This is more accurate than text scan.
+
+---
+
+## Phase 5.5 — Summarize Conditions
+
+Convert:
+
+```text
+code-conditions.json
+ts-conditions.json
+```
+
+into:
+
+```text
+code-summary.json
+ts-summary.json
+```
+
+---
+
+## Phase 6 — Fixture Coverage / Merge Summary
+
+Compare:
+
+```text
+code summary
+fixture summary
+```
+
+Output:
+
+```text
+coverage-summary.json
+```
+
+This shows:
+
+* missing fixture values
+* extra fixture values
+* coverage percentage
+
+---
+
+## Phase 7 — Project-local Usage & Config
+
+Support:
+
+```text
+testtree.config.json
+```
+
+Commands:
+
+```bash
+testtree init-config
 testtree flow
 ```
+
+Goal:
+
+Users can install TestTree in a target project and run the workflow without long paths.
+
+---
+
+## Phase 7.5 — Show Summary
+
+Render summary JSON as readable plain text:
+
+```text
+status:
+- PRE_PENDING
+- PENDING
+- COMPLETE
+```
+
+---
+
+## Phase 8 — Generate Base Template From Sample
+
+Generate:
+
+```text
+base-template.json
+```
+
+from:
+
+```text
+sample.json
+```
+
+Remove unstable fields by default:
+
+```text
+_id
+id
+createdAt
+updatedAt
+deletedAt
+```
+
+---
+
+## Phase 9 — Suggest Variants From Coverage
+
+Read:
+
+```text
+coverage-summary.json
+```
+
+Generate:
+
+```text
+suggested-variants.json
+```
+
+Each missing value becomes a suggested variant patch.
+
+---
+
+## Phase 10 — DTO / Schema Scanner
+
+Scan schemas and validators.
+
+Detect:
+
+* TypeScript enums
+* Zod enum
+* Zod nativeEnum
+* class-validator decorators
+* simple required fields
+* simple string/number constraints
+
+Output:
+
+```text
+schema-summary.json
+```
+
+---
+
+## Phase 11 — Database Scanner
+
+Read-only MongoDB scanner.
+
+Run distinct values for specified fields.
+
+Output:
+
+```text
+db-summary.json
+```
+
+No database writes are allowed.
+
+No credentials should be logged.
+
+---
+
+## Phase 12 — Multi-source Condition Merger
+
+Merge multiple sources:
+
+```text
+code summary
+fixture summary
+schema summary
+db summary
+```
+
+Output:
+
+```text
+unified-condition-catalog.json
+```
+
+This shows:
+
+* all known values
+* value sources
+* source coverage per field
 
 ---
 
@@ -372,6 +712,7 @@ All commands should:
 * avoid crashing silently
 * avoid partial invalid output
 * keep output deterministic
+* avoid mutating input files unless explicitly requested
 
 ---
 
@@ -404,6 +745,8 @@ Every phase must:
 * include unit tests
 * pass build
 * pass CLI smoke tests
+* avoid external services in unit tests
+* mock MongoDB in database scanner tests
 
 ---
 
@@ -415,134 +758,160 @@ README must include:
 * Why use base + variants
 * Installation
 * Quick start
-* generate command
-* init command
-* inspect command
-* catalog command
-* scan-code command
-* scan-ts command
-* summarize-conditions command
-* merge-summary command
-* init-config command
-* flow command
-* Example workflow
+* Full workflow
+* All CLI commands
+* Project-local usage
+* Example outputs
 * Roadmap
+* Safety notes for database scanning
 
 README must be written in English.
 
 ---
 
+# Important Safety Notes
+
+Database scanner must be read-only.
+
+`scan-db` must never:
+
+* insert
+* update
+* delete
+* create index
+* drop collection
+* mutate database
+
+It should only run read operations such as:
+
+```text
+distinct
+find with limit if needed
+```
+
+---
+
 # Workflow Examples
-
-## From Fixtures
-
-```bash id="6tn7um"
-testtree generate \
-  --base ./examples/order/base-template.json \
-  --variants ./examples/order/variants.json \
-  --out ./examples/order/fixtures
-
-testtree inspect \
-  --fixtures ./examples/order/fixtures \
-  --out ./examples/order/fixture-summary.json
-
-testtree catalog \
-  --summary ./examples/order/fixture-summary.json \
-  --out ./examples/order/condition-catalog-from-fixtures.json \
-  --domain order
-```
-
----
-
-## From Text Code Scanner
-
-```bash id="mo00ec"
-testtree scan-code \
-  --project /path/to/project/src \
-  --out ./examples/order/code-conditions.json
-
-testtree summarize-conditions \
-  --conditions ./examples/order/code-conditions.json \
-  --out ./examples/order/code-summary.json
-
-testtree catalog \
-  --summary ./examples/order/code-summary.json \
-  --out ./examples/order/condition-catalog-from-code.json \
-  --domain order
-```
-
----
-
-## From TypeScript AST Scanner
-
-```bash id="hddj2j"
-testtree scan-ts \
-  --project /path/to/project/src \
-  --out ./examples/order/ts-conditions.json
-
-testtree summarize-conditions \
-  --conditions ./examples/order/ts-conditions.json \
-  --out ./examples/order/ts-summary.json
-
-testtree catalog \
-  --summary ./examples/order/ts-summary.json \
-  --out ./examples/order/condition-catalog-from-ts.json \
-  --domain order
-```
-
----
-
-## Coverage Workflow
-
-```bash id="s5txpd"
-testtree merge-summary \
-  --code-summary ./examples/order/ts-summary.json \
-  --fixture-summary ./examples/order/fixture-summary.json \
-  --out ./examples/order/coverage-summary.json
-```
-
----
 
 ## Project-local Workflow
 
-```bash id="j03j4t"
+```bash
 npm install -D testtree
-
 npx testtree init-config
-
 npx testtree flow
+```
+
+---
+
+## Code Discovery Workflow
+
+```bash
+testtree scan-ts \
+  --project ./src \
+  --out ./testtree/ts-conditions.json
+
+testtree summarize-conditions \
+  --conditions ./testtree/ts-conditions.json \
+  --out ./testtree/ts-summary.json
+
+testtree catalog \
+  --summary ./testtree/ts-summary.json \
+  --out ./testtree/condition-catalog.json \
+  --domain order
+```
+
+---
+
+## Fixture Coverage Workflow
+
+```bash
+testtree generate \
+  --base ./testtree/base-template.json \
+  --variants ./testtree/variants.json \
+  --out ./testtree/fixtures
+
+testtree inspect \
+  --fixtures ./testtree/fixtures \
+  --out ./testtree/fixture-summary.json
+
+testtree merge-summary \
+  --code-summary ./testtree/ts-summary.json \
+  --fixture-summary ./testtree/fixture-summary.json \
+  --out ./testtree/coverage-summary.json
+```
+
+---
+
+## Base + Variant Suggestion Workflow
+
+```bash
+testtree generate-template \
+  --sample ./testtree/sample.json \
+  --out ./testtree/base-template.json
+
+testtree suggest-variants \
+  --coverage ./testtree/coverage-summary.json \
+  --out ./testtree/suggested-variants.json
+```
+
+---
+
+## Full Condition Discovery Workflow
+
+```bash
+testtree scan-ts \
+  --project ./src \
+  --out ./testtree/ts-conditions.json
+
+testtree summarize-conditions \
+  --conditions ./testtree/ts-conditions.json \
+  --out ./testtree/ts-summary.json
+
+testtree scan-schema \
+  --project ./src \
+  --out ./testtree/schema-summary.json
+
+testtree scan-db \
+  --uri "$MONGO_URI" \
+  --database mydb \
+  --collection orders \
+  --fields status,payment.type,channel \
+  --out ./testtree/db-summary.json
+
+testtree merge-conditions \
+  --code-summary ./testtree/ts-summary.json \
+  --fixture-summary ./testtree/fixture-summary.json \
+  --schema-summary ./testtree/schema-summary.json \
+  --db-summary ./testtree/db-summary.json \
+  --out ./testtree/unified-condition-catalog.json \
+  --domain order
 ```
 
 ---
 
 # Future Roadmap Ideas
 
-## Phase 8
+Do NOT implement yet:
 
-* merge fixture conditions + code conditions automatically
-* smarter condition merging
+## Phase 13
 
-## Phase 9
+OpenAPI support
 
-* OpenAPI support
-* JSON schema support
+## Phase 14
 
-## Phase 10
+JSON Schema support
 
-* AI-assisted discovery
-* automatic scenario suggestions
+## Phase 15
 
-## Phase 11
+AI-assisted scenario suggestions
 
-* plugin architecture
+## Phase 16
 
-## Phase 12
+Plugin architecture
 
-* database adapters
+## Phase 17
 
-These are roadmap ideas only.
-
-DO NOT implement yet.
+Database adapters beyond MongoDB
 
 ---
 
@@ -561,7 +930,12 @@ The project is successful if:
 9. TypeScript scanning works
 10. coverage summary works
 11. project-local workflow works
-12. beginner developers can understand the codebase
+12. base template can be generated from sample
+13. variants can be suggested from coverage
+14. schema summary can be generated
+15. database summary can be generated read-only
+16. unified condition catalog can be generated
+17. beginner developers can understand the codebase
 
 ---
 
@@ -578,10 +952,17 @@ Implement only:
 * Phase 5.5
 * Phase 6
 * Phase 7
+* Phase 7.5
+* Phase 8
+* Phase 9
+* Phase 10
+* Phase 11
+* Phase 12
 
 Do NOT implement future roadmap phases yet.
 
 If multiple implementations are possible:
+
 choose the simplest maintainable approach.
 
 ```

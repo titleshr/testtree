@@ -12,6 +12,10 @@ import { showSummary } from '../core/show-summary';
 import { loadConfig } from '../core/load-config';
 import { initConfig } from '../core/init-config';
 import { runFlow } from '../core/run-flow';
+import { generateTemplate } from '../core/generate-template';
+import { suggestVariants } from '../core/suggest-variants';
+import { scanSchema } from '../core/scan-schema';
+import { scanDb } from '../core/scan-db';
 
 const program = new Command();
 
@@ -202,6 +206,68 @@ program
         fixtureSummaryPath: options.fixtureSummary,
         outPath: options.out,
       });
+    } catch (err) {
+      console.error('Error:', (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('scan-db')
+  .description('Scan a MongoDB collection for distinct field values (read-only)')
+  .requiredOption('--uri <uri>', 'MongoDB connection URI')
+  .requiredOption('--database <name>', 'Database name')
+  .requiredOption('--collection <name>', 'Collection name')
+  .requiredOption('--fields <fields>', 'Comma-separated field names to scan (e.g. "status,payment.type")')
+  .requiredOption('--out <path>', 'Output path for db-summary.json')
+  .action((options) => {
+    const fields = options.fields.split(',').map((s: string) => s.trim());
+    scanDb({ uri: options.uri, database: options.database, collection: options.collection, fields, outPath: options.out })
+      .catch((err) => {
+        console.error('Error:', (err as Error).message);
+        process.exit(1);
+      });
+  });
+
+program
+  .command('scan-schema')
+  .description('Scan TypeScript source for enums, Zod schemas, and class-validator decorators')
+  .requiredOption('--project <dir>', 'Project source directory to scan')
+  .requiredOption('--out <path>', 'Output path for schema-summary.json')
+  .option('--tsconfig <path>', 'Path to tsconfig.json')
+  .action((options) => {
+    try {
+      scanSchema({ projectDir: options.project, outPath: options.out, tsConfigPath: options.tsconfig });
+    } catch (err) {
+      console.error('Error:', (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('suggest-variants')
+  .description('Generate suggested variant patches from missing values in coverage-summary.json')
+  .requiredOption('--coverage <path>', 'Path to coverage-summary.json')
+  .requiredOption('--out <path>', 'Output path for suggested-variants.json')
+  .action((options) => {
+    try {
+      suggestVariants({ coveragePath: options.coverage, outPath: options.out });
+    } catch (err) {
+      console.error('Error:', (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('generate-template')
+  .description('Generate base-template.json from a sample JSON file')
+  .requiredOption('--sample <path>', 'Path to sample.json')
+  .requiredOption('--out <path>', 'Output path for base-template.json')
+  .option('--ignore <fields>', 'Comma-separated extra fields to remove (e.g. "_id,createdAt")')
+  .action((options) => {
+    try {
+      const ignore = options.ignore ? options.ignore.split(',').map((s: string) => s.trim()) : undefined;
+      generateTemplate({ samplePath: options.sample, outPath: options.out, ignore });
     } catch (err) {
       console.error('Error:', (err as Error).message);
       process.exit(1);

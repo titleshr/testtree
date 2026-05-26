@@ -1,7 +1,28 @@
 ````md
 # TestTree Phase Tasks
 
-Version: Phase 1 → Phase 7
+Version: Phase 1 → Phase 12
+
+---
+
+# Global Rules
+
+TestTree is a TypeScript CLI tool.
+
+Do:
+- Keep code simple and readable
+- Add unit tests for every phase
+- Update README after each phase
+- Run test and build after each phase
+- Prefer JSON file-based workflow
+- Keep commands deterministic
+
+Do not:
+- Add AI API yet
+- Add frontend UI
+- Add database write/seed yet
+- Add complex plugin architecture yet
+- Over-engineer abstractions
 
 ---
 
@@ -9,90 +30,83 @@ Version: Phase 1 → Phase 7
 
 ## Goal
 
-Generate fixture JSON files from:
+Generate fixture JSON files from one base template and multiple variants.
 
-```text
-base-template.json + variants.json
-````
-
-## CLI Command
+## Command
 
 ```bash
 testtree generate \
-  --base ./base-template.json \
-  --variants ./variants.json \
-  --out ./fixtures
+  --base ./testtree/base-template.json \
+  --variants ./testtree/variants.json \
+  --out ./testtree/fixtures
+````
+
+## Behavior
+
+* Read `base-template.json`
+* Read `variants.json`
+* Validate variants
+* Clone base data for each variant
+* Apply variant patch to cloned base
+* Write one fixture JSON file per variant
+* Create output directory if missing
+
+## Patch Support
+
+Must support:
+
+```json
+{
+  "status": "COMPLETE",
+  "payment.type": "COD",
+  "basket.products.0.isFree": true,
+  "payment": null
+}
 ```
 
-## Required Features
+## Output
 
-* read base-template.json
-* read variants.json
-* validate variants
-* clone base template
-* apply patch fields
-* support nested field paths
-* support array index paths
-* support null replacement
-* support object replacement
-* support array replacement
-* create output folder automatically
-* generate fixture files
-* log generated file count
+```text
+fixtures/
+  order_complete.json
+  order_pending.json
+```
 
-## Files To Create
+## Files
 
 ```text
 src/core/apply-patch.ts
 src/core/generate-fixtures.ts
 src/core/read-json.ts
 src/core/write-json.ts
-src/types/variant.ts
-src/types/generator-options.ts
 src/validation/variant-schema.ts
 tests/apply-patch.test.ts
 tests/generate-fixtures.test.ts
 ```
 
-## Success Criteria
-
-* generate command works
-* fixtures generated correctly
-* tests pass
-* build passes
-
 ---
 
-# Phase 2 — Workspace Initialization
+# Phase 2 — Workspace Init
 
 ## Goal
 
-Create workflow template files automatically.
+Create starter workflow files.
 
-## CLI Command
+## Command
 
 ```bash
-testtree init \
-  --out ./examples/order
+testtree init --out ./testtree
 ```
 
 Optional:
 
 ```bash
-testtree init \
-  --out ./examples/order \
-  --force
+testtree init --out ./testtree --force
 ```
 
-## Required Features
+## Behavior
 
-* create output directory
-* create workflow template files
-* do not overwrite existing files by default
-* support --force overwrite
-* log created files
-
-## Files To Generate
+Create:
 
 ```text
 sample.json
@@ -100,25 +114,22 @@ condition-catalog.json
 scenario-plan.json
 base-template.json
 variants.json
+fixtures/
 ```
 
-## Files To Create
+Rules:
+
+* Do not overwrite existing files by default
+* Overwrite only with `--force`
+* Log created/skipped files
+
+## Files
 
 ```text
 src/core/init-workspace.ts
-src/templates/condition-catalog-template.ts
-src/templates/scenario-plan-template.ts
-src/templates/base-template-template.ts
-src/templates/variants-template.ts
+src/templates/*
 tests/init-workspace.test.ts
 ```
-
-## Success Criteria
-
-* init command works
-* workflow files created
-* tests pass
-* build passes
 
 ---
 
@@ -126,75 +137,55 @@ tests/init-workspace.test.ts
 
 ## Goal
 
-Inspect generated fixtures and summarize field values.
+Summarize values from generated fixtures.
 
-## CLI Command
+## Command
 
 ```bash
 testtree inspect \
-  --fixtures ./examples/order/fixtures \
-  --out ./examples/order/fixture-summary.json
+  --fixtures ./testtree/fixtures \
+  --out ./testtree/fixture-summary.json
 ```
 
-## Required Features
+## Behavior
 
-* read all fixture JSON files
-* flatten nested objects
-* flatten array paths
-* collect unique values
-* count unique values
-* export fixture-summary.json
-* log inspection summary
+* Read all `.json` files in fixtures folder
+* Flatten nested objects into field paths
+* Support array index paths
+* Collect unique values per field
+* Count unique values
+* Export summary JSON
 
-## Output Example
+## Output
 
 ```json
 {
   "fields": {
     "status": {
       "count": 3,
-      "values": ["COMPLETE", "PENDING", "PRE_PENDING"]
+      "values": ["PRE_PENDING", "PENDING", "COMPLETE"]
+    },
+    "payment.type": {
+      "count": 2,
+      "values": ["COD", "BANK"]
     }
   }
 }
 ```
 
-## Value Handling Rules
+## Value Rules
 
-Primitive values:
+* Primitive values stay as-is
+* Object value becomes `"[object]"`
+* Array value becomes `"[array]"`
 
-```text
-string, number, boolean, null
-```
-
-Object values:
-
-```text
-"[object]"
-```
-
-Array values:
-
-```text
-"[array]"
-```
-
-## Files To Create
+## Files
 
 ```text
 src/core/inspect-fixtures.ts
 src/core/flatten-object.ts
-src/types/fixture-summary.ts
 tests/inspect-fixtures.test.ts
 ```
-
-## Success Criteria
-
-* inspect command works
-* fixture-summary.json generated
-* unique values counted correctly
-* tests pass
-* build passes
 
 ---
 
@@ -202,98 +193,84 @@ tests/inspect-fixtures.test.ts
 
 ## Goal
 
-Generate condition-catalog.json from fixture-summary.json.
+Convert summary file into condition catalog.
 
-## CLI Command
+## Command
 
 ```bash
 testtree catalog \
-  --summary ./examples/order/fixture-summary.json \
-  --out ./examples/order/condition-catalog.json \
+  --summary ./testtree/fixture-summary.json \
+  --out ./testtree/condition-catalog.json \
   --domain order
 ```
 
-## Required Features
+## Behavior
 
-* read fixture-summary.json
-* generate condition catalog fields
-* set sampleValue
-* set possibleValues
-* mark condition fields
-* export condition-catalog.json
+* Read summary file
+* Convert every field into catalog item
+* Use first value as `sampleValue`
+* Use all values as `possibleValues`
+* Set `isConditionField = true` when count > 1
+* Set `sources = ["fixtures"]`
+* Export catalog JSON
 
-## Rules
+## Output
 
-* use first value as sampleValue
-* set sources to ["fixtures"]
-* set isConditionField = true when count > 1
-* notes default to ""
+```json
+{
+  "domain": "order",
+  "fields": [
+    {
+      "fieldPath": "payment.type",
+      "sampleValue": "COD",
+      "possibleValues": ["COD", "BANK"],
+      "sources": ["fixtures"],
+      "isConditionField": true,
+      "notes": ""
+    }
+  ]
+}
+```
 
-## Files To Create
+## Files
 
 ```text
 src/core/generate-condition-catalog.ts
-src/types/condition-catalog.ts
-src/validation/condition-catalog-schema.ts
 tests/generate-condition-catalog.test.ts
 ```
 
-## Success Criteria
-
-* catalog command works
-* condition-catalog.json generated
-* tests pass
-* build passes
-
 ---
 
-# Phase 4 — Simple Code Scanner
+# Phase 4 — Text Code Scanner
 
 ## Goal
 
-Scan source code using simple text pattern matching.
+Scan source code with simple text/regex patterns.
 
-This phase is NOT AST-based yet.
-
-## CLI Command
+## Command
 
 ```bash
 testtree scan-code \
   --project ./src \
-  --out ./examples/order/code-conditions.json
+  --out ./testtree/code-conditions.json
 ```
 
-Optional:
+## Behavior
 
-```bash
-testtree scan-code \
-  --project ./src \
-  --out ./examples/order/code-conditions.json \
-  --include "src/**/*.ts" \
-  --ignore "node_modules/**,dist/**"
-```
+* Scan `.ts`, `.tsx`, `.js`, `.jsx`
+* Ignore `node_modules`, `dist`, `build`, `coverage`, `.git`
+* Detect simple comparisons:
 
-## Required Features
+  * `a.b === "VALUE"`
+  * `a.b !== "VALUE"`
+  * `a.b == "VALUE"`
+  * `a.b != "VALUE"`
+* Detect switch cases:
 
-* scan .ts/.tsx/.js/.jsx
-* ignore node_modules/dist/build/coverage/.git
-* detect comparison operators:
+  * `case "VALUE":`
+* Capture file and line number
 
-  * ===
-  * !==
-  * ==
-  * !=
-* detect switch case
-* capture:
-
-  * fieldPath
-  * operator
-  * value
-  * file
-  * line
-  * sourceType
-
-## Output Example
+## Output
 
 ```json
 {
@@ -314,22 +291,13 @@ testtree scan-code \
 }
 ```
 
-## Files To Create
+## Files
 
 ```text
 src/core/scan-code.ts
 src/core/find-source-files.ts
-src/types/code-condition.ts
 tests/scan-code.test.ts
 ```
-
-## Success Criteria
-
-* scan-code command works
-* code-conditions.json generated
-* conditions detected
-* tests pass
-* build passes
 
 ---
 
@@ -337,14 +305,14 @@ tests/scan-code.test.ts
 
 ## Goal
 
-Improve scanning accuracy using ts-morph.
+Scan TypeScript source code more accurately using `ts-morph`.
 
-## CLI Command
+## Command
 
 ```bash
 testtree scan-ts \
   --project ./src \
-  --out ./examples/order/ts-conditions.json
+  --out ./testtree/ts-conditions.json
 ```
 
 Optional:
@@ -352,41 +320,29 @@ Optional:
 ```bash
 testtree scan-ts \
   --project ./src \
-  --out ./examples/order/ts-conditions.json \
+  --out ./testtree/ts-conditions.json \
   --tsconfig ./tsconfig.json
 ```
 
-## Required Dependency
+## Behavior
 
-```bash
-npm install ts-morph
+Use `ts-morph` to detect:
+
+* Binary expressions
+* Switch cases
+* Enum declarations
+* Simple const object string values
+
+Examples:
+
+```ts
+if (order.status === "COMPLETE") {}
+switch (payment.type) { case "COD": break }
+enum Status { COMPLETE = "COMPLETE" }
+const PaymentType = { COD: "COD", BANK: "BANK" }
 ```
 
-or:
-
-```bash
-pnpm add ts-morph
-```
-
-## Required Features
-
-Use ts-morph to detect:
-
-* binary expressions
-* switch statements
-* enums
-* simple const object string values
-
-Capture:
-
-* fieldPath
-* operator
-* value
-* file
-* line
-* sourceType
-
-## Output Example
+## Output
 
 ```json
 {
@@ -407,20 +363,12 @@ Capture:
 }
 ```
 
-## Files To Create
+## Files
 
 ```text
 src/core/scan-typescript.ts
 tests/scan-typescript.test.ts
 ```
-
-## Success Criteria
-
-* scan-ts command works
-* ts-conditions.json generated
-* AST scanning works
-* tests pass
-* build passes
 
 ---
 
@@ -428,83 +376,44 @@ tests/scan-typescript.test.ts
 
 ## Goal
 
-Convert code condition output into summary format.
+Convert condition scanner output into summary format.
 
-This command should work with both:
-
-```text
-code-conditions.json
-ts-conditions.json
-```
-
-## CLI Command
+## Command
 
 ```bash
 testtree summarize-conditions \
-  --conditions ./examples/order/ts-conditions.json \
-  --out ./examples/order/ts-summary.json
+  --conditions ./testtree/ts-conditions.json \
+  --out ./testtree/ts-summary.json
 ```
 
-Also support:
+## Behavior
 
-```bash
-testtree summarize-conditions \
-  --conditions ./examples/order/code-conditions.json \
-  --out ./examples/order/code-summary.json
-```
+* Read `conditions` array
+* Group records by `fieldPath`
+* Collect unique values
+* Count unique values
+* Ignore invalid records safely
+* Export summary format compatible with `fixture-summary.json`
 
-## Required Features
-
-* read conditions JSON
-* group by fieldPath
-* collect unique values
-* count unique values
-* export summary format compatible with fixture-summary.json
-* support both text scanner output and ts-morph scanner output
-* ignore invalid condition records safely
-* log summary result
-
-## Output Format
+## Output
 
 ```json
 {
   "fields": {
     "payment.type": {
-      "count": 2,
-      "values": ["COD", "BANK"]
-    },
-    "status": {
       "count": 3,
-      "values": ["PENDING", "COMPLETE", "CANCEL"]
+      "values": ["COD", "BANK", "QR"]
     }
   }
 }
 ```
 
-## Files To Create
+## Files
 
 ```text
 src/core/summarize-conditions.ts
 tests/summarize-conditions.test.ts
 ```
-
-Update if needed:
-
-```text
-src/types/fixture-summary.ts
-src/cli/index.ts
-README.md
-package.json
-```
-
-## Success Criteria
-
-* summarize-conditions command works
-* code-summary.json generated
-* ts-summary.json generated
-* output can be used with catalog command
-* tests pass
-* build passes
 
 ---
 
@@ -512,47 +421,27 @@ package.json
 
 ## Goal
 
-Compare values discovered from source code with values available in generated fixtures.
+Compare code-discovered values with fixture values.
 
-This phase should NOT modify fixture-summary.json directly.
-
-Instead, it generates:
-
-```text
-coverage-summary.json
-```
-
-## CLI Command
+## Command
 
 ```bash
 testtree merge-summary \
-  --code-summary ./examples/order/ts-summary.json \
-  --fixture-summary ./examples/order/fixture-summary.json \
-  --out ./examples/order/coverage-summary.json
+  --code-summary ./testtree/ts-summary.json \
+  --fixture-summary ./testtree/fixture-summary.json \
+  --out ./testtree/coverage-summary.json
 ```
 
-Also support:
+## Behavior
 
-```bash
-testtree merge-summary \
-  --code-summary ./examples/order/code-summary.json \
-  --fixture-summary ./examples/order/fixture-summary.json \
-  --out ./examples/order/coverage-summary.json
-```
+* Read code summary
+* Read fixture summary
+* Compare fields and values
+* Show values missing in fixtures
+* Show values extra in fixtures
+* Calculate coverage percentage
 
-## Required Features
-
-* read code summary JSON
-* read fixture summary JSON
-* compare field paths
-* compare values for each field
-* detect missing values in fixtures
-* detect extra values in fixtures
-* calculate coverage percentage
-* export coverage-summary.json
-* log merge summary
-
-## Output Format
+## Output
 
 ```json
 {
@@ -572,84 +461,31 @@ testtree merge-summary \
 }
 ```
 
-## Files To Create
+## Files
 
 ```text
 src/core/merge-summaries.ts
-src/types/coverage-summary.ts
 tests/merge-summaries.test.ts
 ```
 
-Update if needed:
-
-```text
-src/cli/index.ts
-README.md
-package.json
-```
-
-## Success Criteria
-
-* merge-summary command works
-* coverage-summary.json generated
-* missing fixture values visible
-* extra fixture values visible
-* coverage percentage correct
-* tests pass
-* build passes
-
 ---
 
-# Phase 7 — Project-local Usage & Config
+# Phase 7 — Project-local Config & Flow
 
 ## Goal
 
-Make TestTree easier to use after installing it inside a target project.
+Allow users to install TestTree inside any project and run it without passing long paths.
 
-Users should not need to pass long paths every time.
-
-Instead, users should be able to run:
-
-```bash
-npx testtree init-config
-npx testtree flow
-```
-
-from the root of their project.
-
----
-
-# CLI Commands
-
-## Init Config
+## Commands
 
 ```bash
 testtree init-config
-```
-
-Optional:
-
-```bash
-testtree init-config --force
-```
-
-## Flow
-
-```bash
 testtree flow
 ```
 
-Optional:
+## Config File
 
-```bash
-testtree flow --config ./testtree.config.json
-```
-
----
-
-# Config File
-
-TestTree should support:
+Create/read:
 
 ```text
 testtree.config.json
@@ -668,21 +504,13 @@ Example:
 }
 ```
 
----
-
-# Config Resolution Rules
-
-Priority order:
+## Config Priority
 
 1. CLI options
-2. testtree.config.json
+2. config file
 3. defaults
 
----
-
-# Default Values
-
-If config is missing:
+## Defaults
 
 ```json
 {
@@ -695,41 +523,22 @@ If config is missing:
 }
 ```
 
-If `./src` does not exist:
+If `./src` does not exist, fallback to `"."`.
+
+## Flow Behavior
+
+`testtree flow` runs:
 
 ```text
-project = "."
+scan-ts
+→ summarize-conditions
+→ catalog
+→ generate
+→ inspect
+→ merge-summary
 ```
 
----
-
-# init-config Behavior
-
-The init-config command must:
-
-* create testtree.config.json
-* create outputDir
-* create base-template.json if missing
-* create variants.json if missing
-* create fixtures folder
-* not overwrite existing files by default
-* support --force
-* log created files
-
----
-
-# flow Behavior
-
-The flow command must run the main workflow using config/default paths:
-
-1. scan-ts
-2. summarize-conditions
-3. catalog
-4. generate
-5. inspect
-6. merge-summary
-
-Expected generated files:
+Expected output:
 
 ```text
 testtree/
@@ -741,159 +550,406 @@ testtree/
   coverage-summary.json
 ```
 
----
-
-# Flow Error Handling
-
-If base-template.json or variants.json is missing:
-
-* show readable error
-* suggest running:
-
-```bash
-testtree init-config
-```
-
-If scan-ts fails:
-
-* show readable error
-* do not continue silently
-
-If generate fails:
-
-* stop flow
-* show readable error
-
----
-
-# Required Files
-
-Create:
+## Files
 
 ```text
 src/core/load-config.ts
 src/core/init-config.ts
 src/core/run-flow.ts
-src/types/testtree-config.ts
-src/validation/testtree-config-schema.ts
 tests/load-config.test.ts
 tests/init-config.test.ts
 tests/run-flow.test.ts
 ```
 
-Update:
+---
+
+# Phase 7.5 — Show Summary
+
+## Goal
+
+Display summary JSON as readable plain text.
+
+## Command
+
+```bash
+testtree show-summary \
+  --summary ./testtree/ts-summary.json
+```
+
+Optional:
+
+```bash
+testtree show-summary \
+  --summary ./testtree/ts-summary.json \
+  --fields status,payment.type,channel
+```
+
+## Behavior
+
+* Read summary JSON
+* Print all fields by default
+* If `--fields` is provided, print only selected fields
+* Show missing selected fields as `(no values found)`
+* Show empty summary as `No fields found.`
+
+## Output
 
 ```text
-src/cli/index.ts
-README.md
-package.json
+status:
+- PRE_PENDING
+- PENDING
+- COMPLETE
+- CANCEL
+- REMOVE
+
+payment.type:
+- COD
+- BANK
+- QR
+```
+
+## Files
+
+```text
+src/core/show-summary.ts
+tests/show-summary.test.ts
 ```
 
 ---
 
-# package.json Scripts
+# Phase 8 — Generate Base Template From Sample
+
+## Goal
+
+Generate `base-template.json` from a real sample JSON.
+
+## Command
+
+```bash
+testtree generate-template \
+  --sample ./testtree/sample.json \
+  --out ./testtree/base-template.json
+```
+
+## Behavior
+
+* Read sample JSON
+* Copy reusable structure
+* Remove unstable fields by default
+* Keep nested structure
+* Keep primitive values
+* Export base template
+
+## Default Ignored Fields
+
+```text
+_id
+id
+createdAt
+updatedAt
+deletedAt
+```
+
+Support option:
+
+```bash
+--ignore "_id,createdAt,updatedAt"
+```
+
+## Output
+
+Input:
 
 ```json
 {
-  "scripts": {
-    "init-config:example": "tsx src/cli/index.ts init-config --force",
-    "flow:example": "tsx src/cli/index.ts flow"
+  "_id": "abc",
+  "status": "COMPLETE",
+  "createdAt": "2026-01-01T00:00:00.000Z"
+}
+```
+
+Output:
+
+```json
+{
+  "status": "COMPLETE"
+}
+```
+
+## Files
+
+```text
+src/core/generate-template.ts
+tests/generate-template.test.ts
+```
+
+---
+
+# Phase 9 — Suggest Variants From Coverage
+
+## Goal
+
+Suggest variant patches for values missing in fixtures.
+
+## Command
+
+```bash
+testtree suggest-variants \
+  --coverage ./testtree/coverage-summary.json \
+  --out ./testtree/suggested-variants.json
+```
+
+## Behavior
+
+* Read coverage summary
+* Find `missingInFixtures`
+* Generate one suggested variant per missing value
+* Do not overwrite existing variants
+* Output suggested variants as draft
+
+## Output
+
+```json
+[
+  {
+    "name": "payment_type_qr_case",
+    "purpose": "Cover missing value payment.type=QR",
+    "patch": {
+      "payment.type": "QR"
+    }
+  }
+]
+```
+
+## Naming Rule
+
+Convert field/value into snake case:
+
+```text
+payment.type=QR → payment_type_qr_case
+status=CANCEL → status_cancel_case
+```
+
+## Files
+
+```text
+src/core/suggest-variants.ts
+tests/suggest-variants.test.ts
+```
+
+---
+
+# Phase 10 — DTO / Schema Scanner
+
+## Goal
+
+Scan schemas and validators to discover possible values and validation rules.
+
+## Command
+
+```bash
+testtree scan-schema \
+  --project ./src \
+  --out ./testtree/schema-summary.json
+```
+
+## Behavior
+
+Detect:
+
+* TypeScript enums
+* Zod enum
+* Zod nativeEnum
+* class-validator decorators
+* simple required fields
+* simple string/number constraints
+
+Examples:
+
+```ts
+z.enum(["COD", "BANK"])
+@IsEnum(OrderStatus)
+@IsNotEmpty()
+@Min(1)
+```
+
+## Output
+
+```json
+{
+  "fields": {
+    "payment.type": {
+      "values": ["COD", "BANK"],
+      "rules": ["enum"]
+    },
+    "amount": {
+      "values": [],
+      "rules": ["min:1"]
+    }
   }
 }
 ```
 
----
-
-# Tests Required
-
-## load-config
-
-* load config file
-* use defaults when config missing
-* CLI options override config
-* config overrides defaults
-* fallback project to "." when ./src missing
-
-## init-config
-
-* create config file
-* create outputDir
-* create base-template.json
-* create variants.json
-* create fixtures folder
-* do not overwrite without force
-* overwrite with force
-
-## run-flow
-
-* run flow with mocked internal functions
-* stop when required input missing
-* produce expected output paths
-
----
-
-# Success Criteria
-
-* init-config command works
-* flow command works
-* config file is respected
-* default paths work
-* CLI override works
-* readable errors
-* tests pass
-* build passes
-* README explains local project usage
-
----
-
-# Full Workflow After Phase 7
-
-## Installed in target project
-
-```bash
-npm install -D testtree
-npx testtree init-config
-npx testtree flow
-```
-
-## Expected Output
+## Files
 
 ```text
-testtree/
-  base-template.json
-  variants.json
-  ts-conditions.json
-  ts-summary.json
-  condition-catalog.json
-  fixtures/
-  fixture-summary.json
-  coverage-summary.json
+src/core/scan-schema.ts
+tests/scan-schema.test.ts
+```
+
+---
+
+# Phase 11 — Database Scanner
+
+## Goal
+
+Discover real values from MongoDB collections using distinct queries.
+
+## Command
+
+```bash
+testtree scan-db \
+  --uri "$MONGO_URI" \
+  --database mydb \
+  --collection orders \
+  --fields status,payment.type,channel \
+  --out ./testtree/db-summary.json
+```
+
+## Behavior
+
+* Connect MongoDB read-only
+* Run distinct for each field
+* Export values found in real data
+* Never write to database
+* Avoid logging credentials
+
+## Output
+
+```json
+{
+  "fields": {
+    "status": {
+      "count": 3,
+      "values": ["PENDING", "COMPLETE", "CANCEL"]
+    }
+  },
+  "meta": {
+    "source": "mongodb",
+    "database": "mydb",
+    "collection": "orders"
+  }
+}
+```
+
+## Files
+
+```text
+src/core/scan-db.ts
+tests/scan-db.test.ts
+```
+
+Use mocked MongoDB client in tests.
+
+---
+
+# Phase 12 — Multi-source Condition Merger
+
+## Goal
+
+Merge conditions from multiple sources into one unified catalog.
+
+## Command
+
+```bash
+testtree merge-conditions \
+  --code-summary ./testtree/ts-summary.json \
+  --fixture-summary ./testtree/fixture-summary.json \
+  --db-summary ./testtree/db-summary.json \
+  --schema-summary ./testtree/schema-summary.json \
+  --out ./testtree/unified-condition-catalog.json \
+  --domain order
+```
+
+## Behavior
+
+* Read available source summaries
+* Merge by field path
+* Combine unique values
+* Preserve source list per value
+* Mark source coverage
+* Export unified catalog
+
+## Output
+
+```json
+{
+  "domain": "order",
+  "fields": [
+    {
+      "fieldPath": "payment.type",
+      "values": [
+        {
+          "value": "COD",
+          "sources": ["code", "fixtures", "db", "schema"]
+        },
+        {
+          "value": "QR",
+          "sources": ["code"]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": true,
+        "db": true,
+        "schema": true
+      }
+    }
+  ]
+}
+```
+
+## Files
+
+```text
+src/core/merge-conditions.ts
+tests/merge-conditions.test.ts
+```
+
+---
+
+# Final Workflow Target
+
+```text
+sample.json
+→ generate-template
+→ scan-ts
+→ scan-schema
+→ scan-db
+→ summarize-conditions
+→ merge-conditions
+→ unified-condition-catalog
+→ suggest-variants
+→ generate fixtures
+→ inspect fixtures
+→ merge-summary
+→ show-summary
 ```
 
 ---
 
 # Final Instruction
 
-Implement phases in this order:
-
-1. Phase 1
-2. Phase 2
-3. Phase 2.5
-4. Phase 3
-5. Phase 4
-6. Phase 5
-7. Phase 5.5
-8. Phase 6
-9. Phase 7
+Implement phases in order.
 
 After each phase:
 
 * run tests
 * run build
 * update README
-* verify CLI commands
+* verify CLI command
 
-Do NOT implement future roadmap features yet.
+Do not implement AI integration yet.
 
 ```
 ```

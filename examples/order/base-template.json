@@ -1,13 +1,18 @@
 {
-  "status": "PENDING",
-  "type": "EXAMPLE",
-  "details": {
-    "source": "manual",
-    "isActive": true
-  },
+  "status": "COMPLETE",
+  "channel": "WEB",
   "payment": {
     "type": "COD",
-    "balance": 0,
-    "isCompleted": false
+    "amount": 250,
+    "isCompleted": true
+  },
+  "basket": {
+    "products": [
+      {
+        "name": "Product A",
+        "qty": 2,
+        "isFree": false
+      }
+    ]
   }
 }
