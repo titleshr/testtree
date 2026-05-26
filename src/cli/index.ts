@@ -272,10 +272,12 @@ program
   .command('suggest-variants')
   .description('Generate suggested variant patches from missing values in coverage-summary.json')
   .requiredOption('--coverage <path>', 'Path to coverage-summary.json')
-  .requiredOption('--out <path>', 'Output path for suggested-variants.json')
+  .option('--out <path>', 'Output path for suggested-variants.json (omit to print only)')
+  .option('--fields <fields>', 'Comma-separated field paths to include (e.g. status,payment.type)')
   .action((options) => {
     try {
-      suggestVariants({ coveragePath: options.coverage, outPath: options.out });
+      const fields = options.fields ? (options.fields as string).split(',').map((f: string) => f.trim()) : undefined;
+      suggestVariants({ coveragePath: options.coverage, outPath: options.out, fields });
     } catch (err) {
       console.error('Error:', (err as Error).message);
       process.exit(1);

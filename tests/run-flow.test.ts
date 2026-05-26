@@ -127,10 +127,11 @@ describe('runFlow — with db config', () => {
     });
   });
 
-  it('still calls suggestVariants in print-only mode', async () => {
+  it('calls suggestVariants with db.fields so patches match document structure', async () => {
     await runFlow(makeConfig(DB_CONFIG));
     expect(vi.mocked(suggestVariants)).toHaveBeenCalledWith({
       coveragePath: join(TMP_DIR, 'coverage-summary.json'),
+      fields: ['status', 'payment.type'],
     });
   });
 });

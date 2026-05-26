@@ -191,3 +191,86 @@ describe('suggestVariants', () => {
     expect(result[0].purpose).toBe('Cover missing value status=CANCEL');
   });
 });
+
+describe('suggestVariants — fields filter', () => {
+  it('returns only variants for specified fields', () => {
+    writeCoverage({
+      fields: {
+        status: {
+          codeValues: ['PENDING', 'CANCEL'],
+          fixtureValues: ['PENDING'],
+          missingInFixtures: ['CANCEL'],
+          extraInFixtures: [],
+          coverage: { covered: 1, total: 2, percent: 50 },
+        },
+        'payment.type': {
+          codeValues: ['COD', 'QR'],
+          fixtureValues: ['COD'],
+          missingInFixtures: ['QR'],
+          extraInFixtures: [],
+          coverage: { covered: 1, total: 2, percent: 50 },
+        },
+        'order.internalRef': {
+          codeValues: ['REF001'],
+          fixtureValues: [],
+          missingInFixtures: ['REF001'],
+          extraInFixtures: [],
+          coverage: { covered: 0, total: 1, percent: 0 },
+        },
+      },
+    });
+
+    suggestVariants({ coveragePath: COVERAGE_PATH, outPath: OUT_PATH, fields: ['status', 'payment.type'] });
+
+    const result = readJson(OUT_PATH) as { name: string }[];
+    const names = result.map((v) => v.name);
+    expect(names).toContain('status_cancel_case');
+    expect(names).toContain('payment_type_qr_case');
+    expect(names).not.toContain('order_internalref_ref001_case');
+  });
+
+  it('returns all fields when fields filter is empty array', () => {
+    writeCoverage({
+      fields: {
+        status: {
+          codeValues: ['CANCEL'],
+          fixtureValues: [],
+          missingInFixtures: ['CANCEL'],
+          extraInFixtures: [],
+          coverage: { covered: 0, total: 1, percent: 0 },
+        },
+        'payment.type': {
+          codeValues: ['QR'],
+          fixtureValues: [],
+          missingInFixtures: ['QR'],
+          extraInFixtures: [],
+          coverage: { covered: 0, total: 1, percent: 0 },
+        },
+      },
+    });
+
+    suggestVariants({ coveragePath: COVERAGE_PATH, outPath: OUT_PATH, fields: [] });
+
+    const result = readJson(OUT_PATH) as { name: string }[];
+    expect(result).toHaveLength(2);
+  });
+
+  it('returns empty when fields filter does not match any field in coverage', () => {
+    writeCoverage({
+      fields: {
+        status: {
+          codeValues: ['CANCEL'],
+          fixtureValues: [],
+          missingInFixtures: ['CANCEL'],
+          extraInFixtures: [],
+          coverage: { covered: 0, total: 1, percent: 0 },
+        },
+      },
+    });
+
+    suggestVariants({ coveragePath: COVERAGE_PATH, outPath: OUT_PATH, fields: ['nonexistent'] });
+
+    const result = readJson(OUT_PATH) as unknown[];
+    expect(result).toHaveLength(0);
+  });
+});

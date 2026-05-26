@@ -11,6 +11,7 @@ interface SuggestedVariant {
 interface SuggestVariantsOptions {
   coveragePath: string;
   outPath?: string;
+  fields?: string[];
 }
 
 function toSnakeCase(text: string): string {
@@ -26,11 +27,13 @@ function buildVariantName(fieldPath: string, value: unknown): string {
   return `${fieldPart}_${valuePart}_case`;
 }
 
-export function suggestVariants({ coveragePath, outPath }: SuggestVariantsOptions): void {
+export function suggestVariants({ coveragePath, outPath, fields }: SuggestVariantsOptions): void {
   const coverage = readJson(coveragePath) as CoverageSummary;
   const suggested: SuggestedVariant[] = [];
+  const fieldFilter = fields && fields.length > 0 ? new Set(fields) : null;
 
   for (const [fieldPath, field] of Object.entries(coverage.fields)) {
+    if (fieldFilter && !fieldFilter.has(fieldPath)) continue;
     for (const value of field.missingInFixtures) {
       suggested.push({
         name: buildVariantName(fieldPath, value),

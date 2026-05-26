@@ -66,7 +66,7 @@ export async function runFlow(config: ResolvedConfig): Promise<void> {
   });
 
   console.log(next('suggest-variants'));
-  suggestVariants({ coveragePath });
+  suggestVariants({ coveragePath, fields: config.db?.fields });
 
   console.log('\nFlow complete.');
   console.log(`Output: ${outputDir}`);
