@@ -6,9 +6,14 @@
   "bin": {
     "testtree": "dist/cli/index.js"
   },
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "dev": "tsx src/cli/index.ts",
     "build": "tsc",
+    "prepare": "npm run build",
     "test": "vitest",
     "generate:example": "tsx src/cli/index.ts generate --base ./examples/order/base-template.json --variants ./examples/order/variants.json --out ./examples/order/fixtures",
     "init:example": "tsx src/cli/index.ts init --out ./examples/order --force",
@@ -23,6 +28,7 @@
     "generate-template:example": "tsx src/cli/index.ts generate-template --sample ./examples/order/sample.json --out ./examples/order/base-template.json",
     "suggest-variants:example": "tsx src/cli/index.ts suggest-variants --coverage ./examples/order/coverage-summary.json --out ./examples/order/suggested-variants.json",
     "scan-schema:example": "tsx src/cli/index.ts scan-schema --project ./examples/order/schema-src --out ./examples/order/schema-summary.json",
+    "merge-conditions:example": "tsx src/cli/index.ts merge-conditions --code-summary ./examples/order/ts-summary.json --fixture-summary ./examples/order/fixture-summary.json --schema-summary ./examples/order/schema-summary.json --out ./examples/order/unified-condition-catalog.json --domain order",
     "init-config:example": "tsx src/cli/index.ts init-config --force",
     "flow:example": "tsx src/cli/index.ts flow"
   },
