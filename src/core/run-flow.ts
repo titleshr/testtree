@@ -26,6 +26,7 @@ export async function runFlow(config: ResolvedConfig): Promise<void> {
   const fixtureSummaryPath = join(outputDir, 'fixture-summary.json');
   const coveragePath = join(outputDir, 'coverage-summary.json');
   const dbSummaryPath = config.db ? join(outputDir, 'db-summary.json') : undefined;
+  const suggestedVariantsPath = join(outputDir, 'suggested-variants.json');
 
   const totalSteps = config.db ? 8 : 7;
   let step = 0;
@@ -67,7 +68,7 @@ export async function runFlow(config: ResolvedConfig): Promise<void> {
   });
 
   console.log(next('suggest-variants'));
-  suggestVariants({ coveragePath, fields: config.db?.fields, dbSummaryPath });
+  suggestVariants({ coveragePath, outPath: suggestedVariantsPath, fields: config.db?.fields, dbSummaryPath });
 
   console.log('\nFlow complete.');
   console.log(`Output: ${outputDir}`);

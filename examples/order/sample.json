@@ -1,25 +1,147 @@
 {
-  "_id": "64a1f2e3b4c5d6e7f8a9b0c1",
-  "id": 1001,
+  "_id": "69a7e9c089a168a6e1582c6d",
+  "socialUserRefId": "2004856224-U0eeb203144c27f3f6bf258b2f0b1b93b",
+  "socialNetworkRefId": {
+    "ownData": null,
+    "dataSetId": null,
+    "permissions": [],
+    "templates": [],
+    "_id": "6639ce47568b16ef898294da",
+    "name": "บันทึกเตือนความจำ",
+    "refId": "2004856224",
+    "accessToken": "l5GyrqOTbue2PkalCaH6ocBq8i54fd0vMq7EOdKHXM2wbBv0SeezAQQmWeaNQGOR/21JXJMxJL1xs0ojKV6lqcaHgauOTRTDdMK/IDIX8LDPplwqieWKznkBaq4pfo5hrd7TQ6i5oTczPzdITV5YZQdB04t89/1O/w1cDnyilFU=",
+    "activate": true,
+    "accountId": "64c1da6e5576fa00123a1398",
+    "teamId": "678fbed98edd723b22c62089",
+    "channel": "LINE",
+    "config": [
+      { "key": "webhook_url", "value": "https://mod-tm-line-realtime-webhook-b3thshwh2a-as.a.run.app/mod-line/webhook/2004856224" },
+      { "key": "basic_id", "value": "@487pmkma" }
+    ],
+    "setting": null,
+    "expireDate": null,
+    "isDeleted": false,
+    "isTokenExpired": false,
+    "secret": "a7fa2f79226918007e379c69359f3655",
+    "createdAt": "2024-05-07T06:46:31.308Z",
+    "updatedAt": "2026-04-03T04:01:39.121Z",
+    "v": 0,
+    "sender": {
+      "shopId": "my_order_shop_2",
+      "shopName": "kitchenshop",
+      "name": "ปองภพ Komprach",
+      "tel": "0982355161",
+      "email": "Komprach@hotmail.com",
+      "address": "ตึกสีน้ำตาล ข้างร้านซ่อมรถ",
+      "addressSubCity": "คลองสาน",
+      "addressCity": "คลองสาน",
+      "addressProvince": "กรุงเทพ",
+      "zipCode": "10600",
+      "showAddress": false,
+      "_id": "69cf3ba3690a599f7a0b35e6",
+      "createdAt": "2026-04-03T04:01:39.121Z",
+      "updatedAt": "2026-04-03T04:01:39.121Z"
+    }
+  },
+  "ticketId": "69a7e9c083e47fee5ca72591",
+  "date": "2026-03-04T08:13:52.648Z",
   "status": "COMPLETE",
-  "channel": "WEB",
-  "payment": {
-    "_id": "64a1f2e3b4c5d6e7f8a9b0c2",
-    "type": "COD",
-    "amount": 250,
-    "isCompleted": true
+  "customerData": {
+    "customerName": "กัญญณภัส เจียวค้างพลู",
+    "tel": "0819026122",
+    "address": "619 ถนนวัดเวฬุวนาราม",
+    "addressSubCity": "นาเกลือ",
+    "addressCity": "กันตัง",
+    "addressProvine": "ตรัง",
+    "zipcode": "92110",
+    "email": "",
+    "comment": ""
+  },
+  "express": {
+    "expressCost": 0,
+    "notInputExpressCostByUser": true
   },
   "basket": {
+    "sumary": 250,
+    "summaryProfit": 250,
     "products": [
       {
-        "_id": "64a1f2e3b4c5d6e7f8a9b0c3",
-        "name": "Product A",
-        "qty": 2,
-        "isFree": false
+        "price": 250,
+        "product": {
+          "limitByAmount": false,
+          "_id": "6790b972d3d07d56fdf35773",
+          "name": "M-เทา",
+          "names": ["M", "เทา"],
+          "socialNetworkRefId": ["2004856224", "EXTERNAL", "103073984445211"],
+          "ssid": "Air01-07",
+          "imageUrl": "https://files.myorder.dev/product/images/Air01-07/1737537844215_slGaxSE8DXuOVrm81C6UFZcl.jfif",
+          "accountId": "64c1da6e5576fa00123a1398",
+          "teamId": "678fbed98edd723b22c62089",
+          "amount": 2978,
+          "price": 250,
+          "details": "Air uniplo",
+          "tags": [],
+          "category": "เสื้อผ้า/แฟชั่น",
+          "cost": 0,
+          "weight": 3.5,
+          "type": "SUB",
+          "productParentsId": "6790b972d3d07d56fdf3575d",
+          "productSetIds": [],
+          "isDelete": false,
+          "unit": "ตัว",
+          "dimensions": { "length": 58, "width": 35, "height": 60 },
+          "color": "สีขาว",
+          "isSyncMetaCatalog": false,
+          "platformCatalog": [],
+          "createdAt": "2025-01-22T09:25:06.511Z",
+          "updatedAt": "2026-03-04T08:13:49.694Z",
+          "v": 0
+        },
+        "amount": 1,
+        "cost": 0,
+        "productId": "6790b972d3d07d56fdf35773",
+        "isFree": false,
+        "limitByAmount": false
       }
-    ]
+    ],
+    "summaryWeight": 3.5,
+    "summaryNoUpsale": 250
   },
-  "createdAt": "2026-01-01T00:00:00.000Z",
-  "updatedAt": "2026-01-02T00:00:00.000Z",
-  "deletedAt": null
+  "discount": {
+    "amount": 0,
+    "notInputDiscountByUser": true
+  },
+  "createByAccountId": "64c1da6e5576fa00123a1398",
+  "customText": [],
+  "type": "INTERNAL",
+  "channel": "LINE",
+  "sumWeight": null,
+  "upsale": { "count": 0, "data": [] },
+  "createTrackingNumberLog": [],
+  "updateStatusLog": [],
+  "details": {
+    "orderFrom": "MYORDER",
+    "isImported": false,
+    "isHybrid": false
+  },
+  "createdAt": "2026-03-04T08:13:52.650Z",
+  "updatedAt": "2026-05-18T06:01:34.624Z",
+  "v": 0,
+  "confirmBillingByAccountId": "64c1da6e5576fa00123a1398",
+  "payment": {
+    "type": "COD",
+    "balance": 250,
+    "paidDate": null,
+    "isCompleted": true,
+    "timestamp": "2026-03-04T08:13:53.546Z",
+    "paymentLog": []
+  },
+  "completedAt": "2026-05-18T06:01:34.621Z",
+  "confirmByAccountId": "68749fb78b7a144f7d6cc281",
+  "totalData": {
+    "totalProductPrice": 250,
+    "totalWeight": 3.5,
+    "totalPrice": 250,
+    "totalNet": 250
+  }
 }

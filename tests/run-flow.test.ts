@@ -75,10 +75,11 @@ describe('runFlow — without db config', () => {
     });
   });
 
-  it('calls suggestVariants in print-only mode (no outPath)', async () => {
+  it('calls suggestVariants with outPath for suggested-variants.json', async () => {
     await runFlow(makeConfig());
     expect(vi.mocked(suggestVariants)).toHaveBeenCalledWith({
       coveragePath: join(TMP_DIR, 'coverage-summary.json'),
+      outPath: join(TMP_DIR, 'suggested-variants.json'),
     });
   });
 });
@@ -132,6 +133,7 @@ describe('runFlow — with db config', () => {
     await runFlow(makeConfig(DB_CONFIG));
     expect(vi.mocked(suggestVariants)).toHaveBeenCalledWith({
       coveragePath: join(TMP_DIR, 'coverage-summary.json'),
+      outPath: join(TMP_DIR, 'suggested-variants.json'),
       fields: ['status', 'payment.type'],
       dbSummaryPath: join(TMP_DIR, 'db-summary.json'),
     });

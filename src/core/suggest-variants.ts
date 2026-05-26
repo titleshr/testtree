@@ -66,10 +66,7 @@ export function suggestVariants({ coveragePath, outPath, fields, dbSummaryPath }
     }
   }
 
-  if (outPath) {
-    writeJson(outPath, suggested);
-    console.log(`Suggested ${suggested.length} variant(s): ${outPath}`);
-  } else if (suggested.length === 0) {
+  if (suggested.length === 0) {
     console.log('No missing variants suggested.');
   } else {
     console.log(`\nSuggested ${suggested.length} variant(s):`);
@@ -77,5 +74,10 @@ export function suggestVariants({ coveragePath, outPath, fields, dbSummaryPath }
       const source = resolveSource(v.patch[Object.keys(v.patch)[0]], Object.keys(v.patch)[0], dbValues);
       console.log(`  • ${v.name} — ${v.purpose}  [${source}]`);
     }
+  }
+
+  if (outPath) {
+    writeJson(outPath, suggested);
+    console.log(`\nWritten to ${outPath}`);
   }
 }
