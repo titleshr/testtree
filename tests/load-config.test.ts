@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdirSync, rmSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { loadConfig } from '../src/core/load-config';
@@ -49,5 +49,67 @@ describe('loadConfig', () => {
     const configPath = join(TMP_DIR, 'missing.config.json');
     const config = loadConfig(configPath, {}, TMP_DIR);
     expect(config.project).toBe('.');
+  });
+});
+
+describe('loadConfig — env interpolation', () => {
+  beforeEach(() => {
+    vi.stubEnv('MONGO_URI', 'mongodb://localhost:27017');
+    vi.stubEnv('MY_DB', 'order_service_db');
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  it('replaces ${VAR} with the environment variable value', () => {
+    const configPath = join(TMP_DIR, 'testtree.config.json');
+    writeFileSync(configPath, JSON.stringify({
+      db: { uri: '${MONGO_URI}', database: 'mydb', collection: 'orders', fields: [] },
+    }));
+    const config = loadConfig(configPath, {}, TMP_DIR);
+    expect(config.db?.uri).toBe('mongodb://localhost:27017');
+  });
+
+  it('interpolates multiple different variables in the same config', () => {
+    const configPath = join(TMP_DIR, 'testtree.config.json');
+    writeFileSync(configPath, JSON.stringify({
+      db: { uri: '${MONGO_URI}', database: '${MY_DB}', collection: 'orders', fields: [] },
+    }));
+    const config = loadConfig(configPath, {}, TMP_DIR);
+    expect(config.db?.uri).toBe('mongodb://localhost:27017');
+    expect(config.db?.database).toBe('order_service_db');
+  });
+
+  it('interpolates variables inside nested objects (db config)', () => {
+    const configPath = join(TMP_DIR, 'testtree.config.json');
+    writeFileSync(configPath, JSON.stringify({
+      db: {
+        uri: '${MONGO_URI}',
+        database: 'mydb',
+        collection: 'orders',
+        fields: ['status'],
+      },
+    }));
+    const config = loadConfig(configPath, {}, TMP_DIR);
+    expect(config.db?.uri).toBe('mongodb://localhost:27017');
+    expect(config.db?.fields).toEqual(['status']);
+  });
+
+  it('leaves plain strings without ${} unchanged', () => {
+    const configPath = join(TMP_DIR, 'testtree.config.json');
+    writeFileSync(configPath, JSON.stringify({ domain: 'order' }));
+    const config = loadConfig(configPath, {}, TMP_DIR);
+    expect(config.domain).toBe('order');
+  });
+
+  it('throws a clear error when the referenced env variable is not set', () => {
+    const configPath = join(TMP_DIR, 'testtree.config.json');
+    writeFileSync(configPath, JSON.stringify({
+      db: { uri: '${UNSET_VAR}', database: 'mydb', collection: 'orders', fields: [] },
+    }));
+    expect(() => loadConfig(configPath, {}, TMP_DIR)).toThrow(
+      'Environment variable "UNSET_VAR" is not set'
+    );
   });
 });

@@ -863,7 +863,7 @@ testtree/
   "variants": "./testtree/variants.json",
   "fixtures": "./testtree/fixtures",
   "db": {
-    "uri": "mongodb+srv://user:pass@cluster.mongodb.net",
+    "uri": "${MONGO_URI}",
     "database": "mydb",
     "collection": "orders",
     "fields": ["status", "payment.type", "basket.products.0.isFree"]
@@ -872,6 +872,28 @@ testtree/
 ```
 
 When `db` is configured, `flow` will run `scan-db` automatically and include the discovered values in the coverage comparison — so any value found in the database that is not covered by a fixture will appear in `missingInFixtures`.
+
+#### Environment variable interpolation
+
+String values in `testtree.config.json` support `${VAR_NAME}` syntax — replaced at runtime with the corresponding environment variable:
+
+```json
+{ "db": { "uri": "${MONGO_URI}" } }
+```
+
+```bash
+MONGO_URI="mongodb://localhost:27017" npx testtree flow
+# or export first
+export MONGO_URI="mongodb+srv://user:pass@cluster.mongodb.net"
+npx testtree flow
+```
+
+If the referenced variable is not set, testtree will throw a clear error before running any steps:
+```
+Error: Environment variable "MONGO_URI" is not set
+```
+
+> **Tip:** Add `testtree.config.json` to `.gitignore` if it contains a literal URI with credentials. Use `${VAR}` interpolation to keep credentials out of the file entirely.
 
 Config resolution priority:
 1. CLI options (`--config`) override everything

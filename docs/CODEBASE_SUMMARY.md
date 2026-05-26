@@ -278,6 +278,7 @@ Naming rule: `payment.type=QR` → `payment_type_qr_case`
 | `coverage-summary.ts` | `{ fields: { [path]: { codeValues, fixtureValues, missingInFixtures, ... } } }` |
 | `code-condition.ts` | shape ของ condition ที่ scanner หาได้: `fieldPath`, `operator`, `value`, `file`, `line` |
 | `testtree-config.ts` | shape ของ `testtree.config.json` + `ResolvedConfig` รองรับ optional `db` field (`DbConfig`: uri, database, collection, fields) |
+| `load-config.ts` | โหลด config จากไฟล์ + ทำ `${VAR}` env interpolation ก่อน merge กับ defaults และ CLI overrides |
 
 ---
 
@@ -317,7 +318,7 @@ Naming rule: `payment.type=QR` → `payment_type_qr_case`
 ## การ test
 
 - ทุก module มี unit test แยก ใน `tests/`
-- รวม **137 tests**, **18 test files**
+- รวม **148 tests**, **18 test files**
 - scan-db ใช้ injectable `createReader` → ไม่ต้องมี MongoDB จริงตอน test
 - scan-typescript / scan-schema เขียนไฟล์ temp ลง `__tmp_*` แล้วลบทิ้งหลัง test
 
