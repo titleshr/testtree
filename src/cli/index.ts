@@ -16,6 +16,7 @@ import { generateTemplate } from '../core/generate-template';
 import { suggestVariants } from '../core/suggest-variants';
 import { scanSchema } from '../core/scan-schema';
 import { scanDb } from '../core/scan-db';
+import { mergeConditions } from '../core/merge-conditions';
 
 const program = new Command();
 
@@ -205,6 +206,31 @@ program
         codeSummaryPath: options.codeSummary,
         fixtureSummaryPath: options.fixtureSummary,
         outPath: options.out,
+      });
+    } catch (err) {
+      console.error('Error:', (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('merge-conditions')
+  .description('Merge conditions from multiple sources into a unified condition catalog')
+  .option('--code-summary <path>', 'Path to ts-summary.json or code-summary.json')
+  .option('--fixture-summary <path>', 'Path to fixture-summary.json')
+  .option('--db-summary <path>', 'Path to db-summary.json')
+  .option('--schema-summary <path>', 'Path to schema-summary.json')
+  .requiredOption('--out <path>', 'Output path for unified-condition-catalog.json')
+  .option('--domain <name>', 'Domain name (e.g. order, user)', 'unknown')
+  .action((options) => {
+    try {
+      mergeConditions({
+        codeSummaryPath: options.codeSummary,
+        fixtureSummaryPath: options.fixtureSummary,
+        dbSummaryPath: options.dbSummary,
+        schemaSummaryPath: options.schemaSummary,
+        outPath: options.out,
+        domain: options.domain,
       });
     } catch (err) {
       console.error('Error:', (err as Error).message);

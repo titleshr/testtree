@@ -32,15 +32,25 @@ Benefits:
 
 ## Installation
 
+### Use in your project (recommended)
+
 ```bash
-# Clone the repository
-git clone https://github.com/your-org/testtree.git
+npm install -D github:titleshr/testtree
+npx testtree --help
+```
+
+### Install a specific branch
+
+```bash
+npm install -D github:titleshr/testtree#feat/phase-8-to-11
+```
+
+### Clone and develop locally
+
+```bash
+git clone https://github.com/titleshr/testtree.git
 cd testtree
-
-# Install dependencies
 npm install
-
-# Run using tsx (no build required)
 npx tsx src/cli/index.ts --help
 ```
 
@@ -281,6 +291,72 @@ testtree inspect --fixtures ./fixtures --out ./fixture-summary.json
 # 4. Check coverage
 testtree merge-summary --code-summary ./ts-summary.json --fixture-summary ./fixture-summary.json --out ./coverage-summary.json
 ```
+
+---
+
+### `testtree merge-conditions`
+
+Merge conditions from multiple sources into one unified catalog. All source options are optional — pass whichever summaries you have.
+
+```bash
+testtree merge-conditions \
+  --code-summary <path> \
+  --fixture-summary <path> \
+  --db-summary <path> \
+  --schema-summary <path> \
+  --out <path> \
+  --domain <name>
+```
+
+| Option | Description |
+|---|---|
+| `--code-summary` | Path to `ts-summary.json` or `code-summary.json` (optional) |
+| `--fixture-summary` | Path to `fixture-summary.json` (optional) |
+| `--db-summary` | Path to `db-summary.json` (optional) |
+| `--schema-summary` | Path to `schema-summary.json` (optional) |
+| `--out` | Output path for `unified-condition-catalog.json` |
+| `--domain` | Domain name, e.g. `order` (default: `unknown`) |
+
+**Usage:**
+
+```bash
+testtree merge-conditions \
+  --code-summary ./testtree/ts-summary.json \
+  --fixture-summary ./testtree/fixture-summary.json \
+  --db-summary ./testtree/db-summary.json \
+  --schema-summary ./testtree/schema-summary.json \
+  --out ./testtree/unified-condition-catalog.json \
+  --domain order
+```
+
+**Example output (`unified-condition-catalog.json`):**
+
+```json
+{
+  "domain": "order",
+  "fields": [
+    {
+      "fieldPath": "payment.type",
+      "values": [
+        { "value": "COD",    "sources": ["code", "fixtures", "db", "schema"] },
+        { "value": "QR",     "sources": ["code"] },
+        { "value": "WALLET", "sources": ["db"] }
+      ],
+      "sourceCoverage": {
+        "code":     true,
+        "fixtures": true,
+        "db":       true,
+        "schema":   true
+      }
+    }
+  ]
+}
+```
+
+- `sources` per value = which sources contain that specific value
+- `sourceCoverage` per field = which sources have **any** values for that field
+- Fields that have no values from any source are excluded from output
+- Missing source files are silently skipped (not an error)
 
 ---
 
@@ -783,18 +859,35 @@ If `./src` does not exist, `project` automatically falls back to `"."`.
 ### Full workflow for a new project
 
 ```bash
-# Install TestTree
-npm install -D testtree
+# 1. Install TestTree
+npm install -D github:titleshr/testtree
 
-# Initialize workspace
+# 2. Initialize workspace
 npx testtree init-config
+# Creates: testtree.config.json, testtree/base-template.json,
+#          testtree/variants.json, testtree/fixtures/
 
-# Edit testtree.config.json to set your domain
-# Edit testtree/base-template.json with your data shape
-# Edit testtree/variants.json with your scenarios
+# 3. (Optional) Generate base-template from a real data sample
+npx testtree generate-template \
+  --sample ./testtree/sample.json \
+  --out ./testtree/base-template.json
 
-# Run the full workflow
+# 4. Edit these two files manually:
+#    testtree/base-template.json  ← shared base data
+#    testtree/variants.json       ← test case patches
+
+# 5. Run the full workflow
 npx testtree flow
+# Produces: ts-conditions, ts-summary, condition-catalog,
+#           fixtures/, fixture-summary, coverage-summary
+
+# 6. See what conditions are missing from fixtures
+npx testtree show-summary --summary ./testtree/coverage-summary.json
+
+# 7. Get suggested variants for missing values
+npx testtree suggest-variants \
+  --coverage ./testtree/coverage-summary.json \
+  --out ./testtree/suggested-variants.json
 ```
 
 ---
@@ -866,9 +959,11 @@ npx testtree flow
 - Runs `distinct` queries only — never writes to the database
 - URI is never logged to protect credentials
 
-### Phase 12 — Multi-source Condition Merger
+### Phase 12 — Multi-source Condition Merger ✓
 
 - `merge-conditions` command merges code, fixture, schema, and DB summaries
+- All source options are optional — use whichever you have
+- Tracks which sources contribute each value, and which sources cover each field
 
 ---
 

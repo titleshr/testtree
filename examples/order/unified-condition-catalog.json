@@ -1,0 +1,379 @@
+{
+  "domain": "order",
+  "fields": [
+    {
+      "fieldPath": "typeof dirOrOptions",
+      "values": [
+        {
+          "value": "string",
+          "sources": [
+            "code"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": false,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "typeof value",
+      "values": [
+        {
+          "value": "object",
+          "sources": [
+            "code"
+          ]
+        },
+        {
+          "value": "string",
+          "sources": [
+            "code"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": false,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "typeof obj",
+      "values": [
+        {
+          "value": "object",
+          "sources": [
+            "code"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": false,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "typeof c",
+      "values": [
+        {
+          "value": "object",
+          "sources": [
+            "code"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": false,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "typeof obj['fieldPath']",
+      "values": [
+        {
+          "value": "string",
+          "sources": [
+            "code"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": false,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "typeof obj['value']",
+      "values": [
+        {
+          "value": "string",
+          "sources": [
+            "code"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": false,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "baseTemplateTemplate",
+      "values": [
+        {
+          "value": "PENDING",
+          "sources": [
+            "code"
+          ]
+        },
+        {
+          "value": "EXAMPLE",
+          "sources": [
+            "code"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": false,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "conditionCatalogTemplate",
+      "values": [
+        {
+          "value": "example",
+          "sources": [
+            "code"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": false,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "scenarioPlanTemplate",
+      "values": [
+        {
+          "value": "example",
+          "sources": [
+            "code"
+          ]
+        },
+        {
+          "value": "balanced",
+          "sources": [
+            "code"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": true,
+        "fixtures": false,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "status",
+      "values": [
+        {
+          "value": "COMPLETE",
+          "sources": [
+            "fixtures",
+            "schema"
+          ]
+        },
+        {
+          "value": "PENDING",
+          "sources": [
+            "fixtures",
+            "schema"
+          ]
+        },
+        {
+          "value": "CANCEL",
+          "sources": [
+            "schema"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": false,
+        "fixtures": true,
+        "db": false,
+        "schema": true
+      }
+    },
+    {
+      "fieldPath": "type",
+      "values": [
+        {
+          "value": "EXAMPLE",
+          "sources": [
+            "fixtures"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": false,
+        "fixtures": true,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "details.source",
+      "values": [
+        {
+          "value": "manual",
+          "sources": [
+            "fixtures"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": false,
+        "fixtures": true,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "details.isActive",
+      "values": [
+        {
+          "value": true,
+          "sources": [
+            "fixtures"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": false,
+        "fixtures": true,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "payment.type",
+      "values": [
+        {
+          "value": "COD",
+          "sources": [
+            "fixtures"
+          ]
+        },
+        {
+          "value": "BANK",
+          "sources": [
+            "fixtures"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": false,
+        "fixtures": true,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "payment.balance",
+      "values": [
+        {
+          "value": 0,
+          "sources": [
+            "fixtures"
+          ]
+        },
+        {
+          "value": 100,
+          "sources": [
+            "fixtures"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": false,
+        "fixtures": true,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "payment.isCompleted",
+      "values": [
+        {
+          "value": false,
+          "sources": [
+            "fixtures"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": false,
+        "fixtures": true,
+        "db": false,
+        "schema": false
+      }
+    },
+    {
+      "fieldPath": "OrderStatus",
+      "values": [
+        {
+          "value": "PENDING",
+          "sources": [
+            "schema"
+          ]
+        },
+        {
+          "value": "COMPLETE",
+          "sources": [
+            "schema"
+          ]
+        },
+        {
+          "value": "CANCEL",
+          "sources": [
+            "schema"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": false,
+        "fixtures": false,
+        "db": false,
+        "schema": true
+      }
+    },
+    {
+      "fieldPath": "channel",
+      "values": [
+        {
+          "value": "WEB",
+          "sources": [
+            "schema"
+          ]
+        },
+        {
+          "value": "APP",
+          "sources": [
+            "schema"
+          ]
+        },
+        {
+          "value": "KIOSK",
+          "sources": [
+            "schema"
+          ]
+        }
+      ],
+      "sourceCoverage": {
+        "code": false,
+        "fixtures": false,
+        "db": false,
+        "schema": true
+      }
+    }
+  ]
+}
