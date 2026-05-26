@@ -117,12 +117,13 @@ describe('runFlow — with db config', () => {
     });
   });
 
-  it('passes dbSummaryPath to mergeSummaries so db values are included in coverage', async () => {
+  it('passes dbSummaryPath and fields to mergeSummaries so coverage is scoped to db.fields', async () => {
     await runFlow(makeConfig(DB_CONFIG));
     expect(vi.mocked(mergeSummaries)).toHaveBeenCalledWith({
       codeSummaryPath: join(TMP_DIR, 'ts-summary.json'),
       fixtureSummaryPath: join(TMP_DIR, 'fixture-summary.json'),
       dbSummaryPath: join(TMP_DIR, 'db-summary.json'),
+      fields: ['status', 'payment.type'],
       outPath: join(TMP_DIR, 'coverage-summary.json'),
     });
   });

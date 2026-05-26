@@ -63,6 +63,7 @@ export async function runFlow(config: ResolvedConfig): Promise<void> {
     fixtureSummaryPath,
     outPath: coveragePath,
     ...(dbSummaryPath && { dbSummaryPath }),
+    fields: config.db?.fields,
   });
 
   console.log(next('suggest-variants'));

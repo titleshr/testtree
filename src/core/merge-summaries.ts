@@ -7,6 +7,7 @@ interface MergeSummariesOptions {
   codeSummaryPath: string;
   fixtureSummaryPath: string;
   dbSummaryPath?: string;
+  fields?: string[];
   outPath: string;
 }
 
@@ -35,7 +36,7 @@ function computeCoverageField(codeValues: unknown[], fixtureValues: unknown[]): 
 }
 
 export function mergeSummaries(options: MergeSummariesOptions): void {
-  const { codeSummaryPath, fixtureSummaryPath, dbSummaryPath, outPath } = options;
+  const { codeSummaryPath, fixtureSummaryPath, dbSummaryPath, fields, outPath } = options;
 
   const codeSummary = readJson(codeSummaryPath) as FixtureSummary;
   const fixtureSummary = readJson(fixtureSummaryPath) as FixtureSummary;
@@ -63,7 +64,8 @@ export function mergeSummaries(options: MergeSummariesOptions): void {
     }
   }
 
-  const allFieldPaths = new Set([...Object.keys(codeFields), ...Object.keys(fixtureFields)]);
+  const fieldFilter = fields && fields.length > 0 ? new Set(fields) : null;
+  const allFieldPaths = fieldFilter ?? new Set([...Object.keys(codeFields), ...Object.keys(fixtureFields)]);
 
   const result: CoverageSummary = { fields: {} };
 

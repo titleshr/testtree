@@ -197,3 +197,77 @@ describe('mergeSummaries', () => {
     expect(result.fields.status.codeValues).toEqual(['PENDING']);
   });
 });
+
+describe('mergeSummaries — fields filter', () => {
+  it('limits coverage to only specified fields, excluding others from code scan', () => {
+    writeJson(CODE_SUMMARY_PATH, {
+      fields: {
+        status: { count: 2, values: ['PENDING', 'CANCEL'] },
+        'payment.type': { count: 2, values: ['COD', 'QR'] },
+        'order.internalRef': { count: 1, values: ['REF001'] },
+      },
+    });
+    writeJson(FIXTURE_SUMMARY_PATH, { fields: {} });
+
+    mergeSummaries({
+      codeSummaryPath: CODE_SUMMARY_PATH,
+      fixtureSummaryPath: FIXTURE_SUMMARY_PATH,
+      fields: ['status', 'payment.type'],
+      outPath: OUT_PATH,
+    });
+
+    const result = JSON.parse(readFileSync(OUT_PATH, 'utf-8'));
+    expect(result.fields).toHaveProperty('status');
+    expect(result.fields).toHaveProperty('payment.type');
+    expect(result.fields).not.toHaveProperty('order.internalRef');
+  });
+
+  it('includes values from both code and db for specified fields only', () => {
+    const dbSummaryPath = join(TMP_DIR, 'db-summary.json');
+    writeJson(CODE_SUMMARY_PATH, {
+      fields: {
+        status: { count: 1, values: ['PENDING'] },
+        'order.internalRef': { count: 1, values: ['REF001'] },
+      },
+    });
+    writeJson(FIXTURE_SUMMARY_PATH, { fields: {} });
+    writeJson(dbSummaryPath, {
+      fields: { status: { count: 1, values: ['CANCEL'] } },
+    });
+
+    mergeSummaries({
+      codeSummaryPath: CODE_SUMMARY_PATH,
+      fixtureSummaryPath: FIXTURE_SUMMARY_PATH,
+      dbSummaryPath,
+      fields: ['status'],
+      outPath: OUT_PATH,
+    });
+
+    const result = JSON.parse(readFileSync(OUT_PATH, 'utf-8'));
+    expect(result.fields).toHaveProperty('status');
+    expect(result.fields).not.toHaveProperty('order.internalRef');
+    expect(result.fields.status.codeValues).toContain('PENDING');
+    expect(result.fields.status.codeValues).toContain('CANCEL');
+  });
+
+  it('falls back to all fields when fields is empty array', () => {
+    writeJson(CODE_SUMMARY_PATH, {
+      fields: {
+        status: { count: 1, values: ['PENDING'] },
+        'payment.type': { count: 1, values: ['COD'] },
+      },
+    });
+    writeJson(FIXTURE_SUMMARY_PATH, { fields: {} });
+
+    mergeSummaries({
+      codeSummaryPath: CODE_SUMMARY_PATH,
+      fixtureSummaryPath: FIXTURE_SUMMARY_PATH,
+      fields: [],
+      outPath: OUT_PATH,
+    });
+
+    const result = JSON.parse(readFileSync(OUT_PATH, 'utf-8'));
+    expect(result.fields).toHaveProperty('status');
+    expect(result.fields).toHaveProperty('payment.type');
+  });
+});
