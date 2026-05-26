@@ -1,4 +1,5 @@
-import { MongoClient } from 'mongodb';
+import { createDbReader } from './db-client';
+import type { DbReader } from './db-client';
 import { writeJson } from './write-json';
 
 interface DbField {
@@ -21,8 +22,8 @@ interface ScanDbOptions {
   collection: string;
   fields: string[];
   outPath: string;
-  // injectable for testing — avoids needing a real MongoDB connection in unit tests
-  createClient?: (uri: string) => Pick<MongoClient, 'connect' | 'db' | 'close'>;
+  // injectable for testing — pass a mock createReader to avoid needing a real MongoDB
+  createReader?: (uri: string, database: string, collection: string) => Promise<DbReader>;
 }
 
 export async function scanDb({
@@ -31,19 +32,15 @@ export async function scanDb({
   collection,
   fields,
   outPath,
-  createClient = (u) => new MongoClient(u),
+  createReader = createDbReader,
 }: ScanDbOptions): Promise<void> {
-  const client = createClient(uri);
+  const reader = await createReader(uri, database, collection);
 
   try {
-    await client.connect();
-    const db = client.db(database);
-    const col = db.collection(collection);
-
     const result: Record<string, DbField> = {};
 
     for (const field of fields) {
-      const values = await col.distinct(field);
+      const values = await reader.distinct(field);
       result[field] = {
         count: values.length,
         values,
@@ -65,6 +62,6 @@ export async function scanDb({
       `DB-scanned "${database}.${collection}" (${fields.length} field(s)) written to ${outPath}`
     );
   } finally {
-    await client.close();
+    await reader.close();
   }
 }

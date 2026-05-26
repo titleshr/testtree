@@ -2,22 +2,18 @@ import { describe, it, expect, beforeEach, afterEach } from 'vitest';
 import { mkdirSync, rmSync, readFileSync, existsSync } from 'fs';
 import { join } from 'path';
 import { scanDb } from '../src/core/scan-db';
+import type { DbReader } from '../src/core/db-client';
 
 const TMP_DIR = join(__dirname, '__tmp_scan_db__');
 const OUT_PATH = join(TMP_DIR, 'db-summary.json');
 
-// Creates a mock MongoDB client with controllable distinct() return values
-function makeMockClient(distinctData: Record<string, unknown[]>) {
-  return (_uri: string) =>
-    ({
-      connect: async () => {},
-      db: (_dbName: string) => ({
-        collection: (_colName: string) => ({
-          distinct: async (field: string) => distinctData[field] ?? [],
-        }),
-      }),
-      close: async () => {},
-    }) as never;
+// Creates a mock DbReader with controllable distinct() return values.
+// Only exposes distinct + close — matching the read-only DbReader interface.
+function makeMockReader(distinctData: Record<string, unknown[]>) {
+  return async (_uri: string, _database: string, _collection: string): Promise<DbReader> => ({
+    distinct: async (field: string) => distinctData[field] ?? [],
+    close: async () => {},
+  });
 }
 
 function readResult(): {
@@ -43,7 +39,7 @@ describe('scanDb', () => {
       collection: 'orders',
       fields: ['status'],
       outPath: OUT_PATH,
-      createClient: makeMockClient({ status: ['PENDING', 'COMPLETE', 'CANCEL'] }),
+      createReader: makeMockReader({ status: ['PENDING', 'COMPLETE', 'CANCEL'] }),
     });
 
     const result = readResult();
@@ -58,7 +54,7 @@ describe('scanDb', () => {
       collection: 'orders',
       fields: ['status', 'payment.type'],
       outPath: OUT_PATH,
-      createClient: makeMockClient({
+      createReader: makeMockReader({
         status: ['PENDING', 'COMPLETE'],
         'payment.type': ['COD', 'BANK', 'QR'],
       }),
@@ -77,7 +73,7 @@ describe('scanDb', () => {
       collection: 'products',
       fields: ['status'],
       outPath: OUT_PATH,
-      createClient: makeMockClient({ status: [] }),
+      createReader: makeMockReader({ status: [] }),
     });
 
     const result = readResult();
@@ -93,7 +89,7 @@ describe('scanDb', () => {
       collection: 'orders',
       fields: ['unknown.field'],
       outPath: OUT_PATH,
-      createClient: makeMockClient({}),
+      createReader: makeMockReader({}),
     });
 
     const result = readResult();
@@ -108,7 +104,7 @@ describe('scanDb', () => {
       collection: 'orders',
       fields: ['payment.type', 'basket.products.0.isFree'],
       outPath: OUT_PATH,
-      createClient: makeMockClient({
+      createReader: makeMockReader({
         'payment.type': ['COD', 'BANK'],
         'basket.products.0.isFree': [true, false],
       }),
@@ -126,7 +122,7 @@ describe('scanDb', () => {
       collection: 'orders',
       fields: ['amount', 'isActive'],
       outPath: OUT_PATH,
-      createClient: makeMockClient({
+      createReader: makeMockReader({
         amount: [0, 100, 250],
         isActive: [true, false],
       }),
@@ -137,23 +133,17 @@ describe('scanDb', () => {
     expect(result.fields['isActive'].values).toEqual([true, false]);
   });
 
-  it('closes the client even when distinct throws an error', async () => {
+  it('closes the reader even when distinct throws an error', async () => {
     let closeCalled = false;
 
-    const errorClient = (_uri: string) =>
-      ({
-        connect: async () => {},
-        db: () => ({
-          collection: () => ({
-            distinct: async () => {
-              throw new Error('DB error');
-            },
-          }),
-        }),
-        close: async () => {
-          closeCalled = true;
-        },
-      }) as never;
+    const errorReader = async (): Promise<DbReader> => ({
+      distinct: async () => {
+        throw new Error('DB error');
+      },
+      close: async () => {
+        closeCalled = true;
+      },
+    });
 
     await expect(
       scanDb({
@@ -162,7 +152,7 @@ describe('scanDb', () => {
         collection: 'orders',
         fields: ['status'],
         outPath: OUT_PATH,
-        createClient: errorClient,
+        createReader: errorReader,
       })
     ).rejects.toThrow('DB error');
 
