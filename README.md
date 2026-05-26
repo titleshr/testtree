@@ -284,6 +284,118 @@ testtree merge-summary --code-summary ./ts-summary.json --fixture-summary ./fixt
 
 ---
 
+### `testtree scan-db`
+
+Scan a MongoDB collection for distinct field values. **Read-only** — never writes to the database.
+
+```bash
+testtree scan-db \
+  --uri "$MONGO_URI" \
+  --database <name> \
+  --collection <name> \
+  --fields <field1,field2,...> \
+  --out <path>
+```
+
+| Option | Description |
+|---|---|
+| `--uri` | MongoDB connection URI (keep in env var, never hardcode) |
+| `--database` | Database name |
+| `--collection` | Collection name |
+| `--fields` | Comma-separated field names to scan |
+| `--out` | Output path for `db-summary.json` |
+
+**Usage:**
+
+```bash
+testtree scan-db \
+  --uri "$MONGO_URI" \
+  --database mydb \
+  --collection orders \
+  --fields status,payment.type,channel \
+  --out ./testtree/db-summary.json
+```
+
+**Example output (`db-summary.json`):**
+```json
+{
+  "fields": {
+    "status": {
+      "count": 3,
+      "values": ["PENDING", "COMPLETE", "CANCEL"]
+    },
+    "payment.type": {
+      "count": 2,
+      "values": ["COD", "BANK"]
+    }
+  },
+  "meta": {
+    "source": "mongodb",
+    "database": "mydb",
+    "collection": "orders"
+  }
+}
+```
+
+> **Safety notes:**
+> - `scan-db` is **read-only**. It only runs `distinct` queries — no insert, update, delete, or index operations.
+> - The MongoDB URI is **never logged**. Always pass it via an environment variable (`$MONGO_URI`), never hardcode it.
+> - Dotted field paths (e.g. `payment.type`) are supported — MongoDB `distinct` handles nested fields natively.
+
+---
+
+### `testtree scan-schema`
+
+Scan TypeScript source files for schema definitions and validation rules. Detects TypeScript enums, Zod schemas, and class-validator decorators.
+
+```bash
+testtree scan-schema --project <dir> --out <path>
+```
+
+| Option | Description |
+|---|---|
+| `--project` | Project source directory to scan |
+| `--out` | Output path for `schema-summary.json` |
+| `--tsconfig` | Path to `tsconfig.json` (optional) |
+
+**Detects:**
+- TypeScript enums → values + rule `"enum"`
+- `z.enum([...])` inside `z.object()` → values + rule `"enum"`, supports nested paths
+- `z.nativeEnum(X)` → rule `"nativeEnum"`
+- `z.number().min(N)` / `.max(N)` → rules `"min:N"` / `"max:N"`
+- `z.string().minLength(N)` / `.maxLength(N)` → rules
+- `@IsEnum`, `@IsNotEmpty`, `@Min`, `@Max`, `@MinLength`, `@MaxLength` on class properties
+
+**Usage:**
+
+```bash
+testtree scan-schema \
+  --project ./src \
+  --out ./testtree/schema-summary.json
+```
+
+**Example output (`schema-summary.json`):**
+```json
+{
+  "fields": {
+    "status": {
+      "values": ["PENDING", "COMPLETE", "CANCEL"],
+      "rules": ["enum"]
+    },
+    "payment.type": {
+      "values": [],
+      "rules": ["nativeEnum"]
+    },
+    "amount": {
+      "values": [],
+      "rules": ["min:0", "max:999999"]
+    }
+  }
+}
+```
+
+---
+
 ### `testtree show-summary`
 
 Display any summary JSON file in human-readable plain text. Works with `ts-summary.json`, `code-summary.json`, and `fixture-summary.json`.
@@ -328,6 +440,118 @@ testtree show-summary --summary ./testtree/ts-summary.json --fields status,payme
 testtree show-summary --summary ./testtree/ts-summary.json --out ./testtree/ts-summary.txt
 testtree show-summary --summary ./testtree/ts-summary.json --out ./testtree/ts-summary.md
 ```
+
+---
+
+### `testtree generate-template`
+
+Generate `base-template.json` from a real sample JSON file. Removes unstable fields (`_id`, `id`, `createdAt`, `updatedAt`, `deletedAt`) at all nesting levels by default.
+
+```bash
+testtree generate-template --sample <path> --out <path>
+```
+
+| Option | Description |
+|---|---|
+| `--sample` | Path to sample JSON file |
+| `--out` | Output path for base-template.json |
+| `--ignore` | Comma-separated extra fields to remove (optional) |
+
+**Basic usage:**
+
+```bash
+testtree generate-template \
+  --sample ./testtree/sample.json \
+  --out ./testtree/base-template.json
+```
+
+**With custom ignore list:**
+
+```bash
+testtree generate-template \
+  --sample ./testtree/sample.json \
+  --out ./testtree/base-template.json \
+  --ignore "internalRef,secretToken"
+```
+
+**Example:**
+
+Input (`sample.json`):
+```json
+{
+  "_id": "64a1f2e3b4c5d6e7f8a9b0c1",
+  "status": "COMPLETE",
+  "payment": {
+    "_id": "64a1f2e3b4c5d6e7f8a9b0c2",
+    "type": "COD",
+    "amount": 250
+  },
+  "createdAt": "2026-01-01T00:00:00.000Z"
+}
+```
+
+Output (`base-template.json`):
+```json
+{
+  "status": "COMPLETE",
+  "payment": {
+    "type": "COD",
+    "amount": 250
+  }
+}
+```
+
+---
+
+### `testtree suggest-variants`
+
+Generate suggested variant patches from values missing in `coverage-summary.json`. Each missing value becomes a draft variant patch with a descriptive name.
+
+```bash
+testtree suggest-variants --coverage <path> --out <path>
+```
+
+| Option | Description |
+|---|---|
+| `--coverage` | Path to coverage-summary.json |
+| `--out` | Output path for suggested-variants.json |
+
+**Usage:**
+
+```bash
+testtree suggest-variants \
+  --coverage ./testtree/coverage-summary.json \
+  --out ./testtree/suggested-variants.json
+```
+
+**Example:**
+
+Input (`coverage-summary.json`):
+```json
+{
+  "fields": {
+    "payment.type": {
+      "missingInFixtures": ["QR"],
+      "..."
+    }
+  }
+}
+```
+
+Output (`suggested-variants.json`):
+```json
+[
+  {
+    "name": "payment_type_qr_case",
+    "purpose": "Cover missing value payment.type=QR",
+    "patch": {
+      "payment.type": "QR"
+    }
+  }
+]
+```
+
+Variant names follow `<field_snake_case>_<value_snake_case>_case` pattern.
 
 ---
 
@@ -597,23 +821,37 @@ npx testtree flow
 - `flow` command runs the full workflow from a single command
 - Config resolution with CLI > config file > defaults priority
 
-### Phase 8 — Schema Integration
+### Phase 7.5 — Show Summary ✓
 
-- OpenAPI schema support
-- JSON Schema support
+- `show-summary` command renders summary JSON as readable plain text
+- Supports `--fields` filter and `--out` to save to file
 
-### Phase 9 — AI-Assisted Discovery
+### Phase 8 — Generate Base Template From Sample ✓
 
-- AI-assisted condition extraction from code
-- Automatic scenario suggestion based on conditions
+- `generate-template` command generates `base-template.json` from a real sample JSON
+- Removes unstable fields (`_id`, `id`, `createdAt`, `updatedAt`, `deletedAt`) recursively
+- Supports custom `--ignore` list
 
-### Phase 10 — Plugin Architecture
+### Phase 9 — Suggest Variants From Coverage ✓
 
-- Extensible plugin system for custom condition sources
+- `suggest-variants` command generates suggested variant patches from coverage gaps
+- Naming rule: `<field>_<value>_case` in snake_case
 
-### Phase 11 — Database Adapters
+### Phase 10 — DTO / Schema Scanner ✓
 
-- Connect to databases to extract real data conditions
+- `scan-schema` command scans TypeScript enums, Zod, and class-validator
+- Detects values from `z.enum()`, rules from `@Min`, `@IsNotEmpty`, etc.
+- Supports nested `z.object()` → dotted field paths like `payment.type`
+
+### Phase 11 — Database Scanner ✓
+
+- `scan-db` command discovers real values from MongoDB (read-only)
+- Runs `distinct` queries only — never writes to the database
+- URI is never logged to protect credentials
+
+### Phase 12 — Multi-source Condition Merger
+
+- `merge-conditions` command merges code, fixture, schema, and DB summaries
 
 ---
 

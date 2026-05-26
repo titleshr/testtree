@@ -1,0 +1,56 @@
+{
+  "fields": {
+    "OrderStatus": {
+      "values": [
+        "PENDING",
+        "COMPLETE",
+        "CANCEL"
+      ],
+      "rules": [
+        "enum"
+      ]
+    },
+    "status": {
+      "values": [
+        "PENDING",
+        "COMPLETE",
+        "CANCEL"
+      ],
+      "rules": [
+        "required",
+        "enum"
+      ]
+    },
+    "amount": {
+      "values": [],
+      "rules": [
+        "min:0",
+        "max:999999"
+      ]
+    },
+    "channel": {
+      "values": [
+        "WEB",
+        "APP",
+        "KIOSK"
+      ],
+      "rules": [
+        "minLength:3",
+        "maxLength:50",
+        "enum"
+      ]
+    },
+    "payment.type": {
+      "values": [],
+      "rules": [
+        "nativeEnum"
+      ]
+    },
+    "payment.amount": {
+      "values": [],
+      "rules": [
+        "min:0"
+      ]
+    }
+  }
+}

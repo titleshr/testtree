@@ -1,0 +1,16 @@
+[
+  {
+    "name": "status_cancel_case",
+    "purpose": "Cover missing value status=CANCEL",
+    "patch": {
+      "status": "CANCEL"
+    }
+  },
+  {
+    "name": "payment_type_qr_case",
+    "purpose": "Cover missing value payment.type=QR",
+    "patch": {
+      "payment.type": "QR"
+    }
+  }
+]

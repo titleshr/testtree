@@ -1,0 +1,45 @@
+import { readJson } from './read-json';
+import { writeJson } from './write-json';
+import type { CoverageSummary } from '../types/coverage-summary';
+
+interface SuggestedVariant {
+  name: string;
+  purpose: string;
+  patch: Record<string, unknown>;
+}
+
+interface SuggestVariantsOptions {
+  coveragePath: string;
+  outPath: string;
+}
+
+function toSnakeCase(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '');
+}
+
+function buildVariantName(fieldPath: string, value: unknown): string {
+  const fieldPart = toSnakeCase(fieldPath);
+  const valuePart = toSnakeCase(String(value));
+  return `${fieldPart}_${valuePart}_case`;
+}
+
+export function suggestVariants({ coveragePath, outPath }: SuggestVariantsOptions): void {
+  const coverage = readJson(coveragePath) as CoverageSummary;
+  const suggested: SuggestedVariant[] = [];
+
+  for (const [fieldPath, field] of Object.entries(coverage.fields)) {
+    for (const value of field.missingInFixtures) {
+      suggested.push({
+        name: buildVariantName(fieldPath, value),
+        purpose: `Cover missing value ${fieldPath}=${String(value)}`,
+        patch: { [fieldPath]: value },
+      });
+    }
+  }
+
+  writeJson(outPath, suggested);
+  console.log(`Suggested ${suggested.length} variant(s): ${outPath}`);
+}

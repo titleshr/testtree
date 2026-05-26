@@ -1,0 +1,29 @@
+typeof dirOrOptions:
+- string
+
+typeof value:
+- object
+- string
+
+typeof obj:
+- object
+
+typeof c:
+- object
+
+typeof obj['fieldPath']:
+- string
+
+typeof obj['value']:
+- string
+
+baseTemplateTemplate:
+- PENDING
+- EXAMPLE
+
+conditionCatalogTemplate:
+- example
+
+scenarioPlanTemplate:
+- example
+- balanced
