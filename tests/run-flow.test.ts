@@ -128,11 +128,12 @@ describe('runFlow — with db config', () => {
     });
   });
 
-  it('calls suggestVariants with db.fields so patches match document structure', async () => {
+  it('calls suggestVariants with db.fields and dbSummaryPath for source annotation', async () => {
     await runFlow(makeConfig(DB_CONFIG));
     expect(vi.mocked(suggestVariants)).toHaveBeenCalledWith({
       coveragePath: join(TMP_DIR, 'coverage-summary.json'),
       fields: ['status', 'payment.type'],
+      dbSummaryPath: join(TMP_DIR, 'db-summary.json'),
     });
   });
 });

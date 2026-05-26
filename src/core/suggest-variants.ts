@@ -1,6 +1,7 @@
 import { readJson } from './read-json';
 import { writeJson } from './write-json';
 import type { CoverageSummary } from '../types/coverage-summary';
+import type { FixtureSummary } from '../types/fixture-summary';
 
 interface SuggestedVariant {
   name: string;
@@ -12,6 +13,7 @@ interface SuggestVariantsOptions {
   coveragePath: string;
   outPath?: string;
   fields?: string[];
+  dbSummaryPath?: string;
 }
 
 function toSnakeCase(text: string): string {
@@ -27,8 +29,29 @@ function buildVariantName(fieldPath: string, value: unknown): string {
   return `${fieldPart}_${valuePart}_case`;
 }
 
-export function suggestVariants({ coveragePath, outPath, fields }: SuggestVariantsOptions): void {
+function loadDbValues(dbSummaryPath: string | undefined): Map<string, Set<string>> {
+  if (!dbSummaryPath) return new Map();
+  try {
+    const db = readJson(dbSummaryPath) as FixtureSummary;
+    const map = new Map<string, Set<string>>();
+    for (const [field, data] of Object.entries(db?.fields ?? {})) {
+      map.set(field, new Set(data.values.map((v) => JSON.stringify(v))));
+    }
+    return map;
+  } catch {
+    return new Map();
+  }
+}
+
+function resolveSource(value: unknown, fieldPath: string, dbValues: Map<string, Set<string>>): string {
+  const key = JSON.stringify(value);
+  const inDb = dbValues.get(fieldPath)?.has(key) ?? false;
+  return inDb ? 'db' : 'code';
+}
+
+export function suggestVariants({ coveragePath, outPath, fields, dbSummaryPath }: SuggestVariantsOptions): void {
   const coverage = readJson(coveragePath) as CoverageSummary;
+  const dbValues = loadDbValues(dbSummaryPath);
   const suggested: SuggestedVariant[] = [];
   const fieldFilter = fields && fields.length > 0 ? new Set(fields) : null;
 
@@ -51,7 +74,8 @@ export function suggestVariants({ coveragePath, outPath, fields }: SuggestVarian
   } else {
     console.log(`\nSuggested ${suggested.length} variant(s):`);
     for (const v of suggested) {
-      console.log(`  • ${v.name} — ${v.purpose}`);
+      const source = resolveSource(v.patch[Object.keys(v.patch)[0]], Object.keys(v.patch)[0], dbValues);
+      console.log(`  • ${v.name} — ${v.purpose}  [${source}]`);
     }
   }
 }

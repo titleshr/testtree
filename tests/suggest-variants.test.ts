@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { mkdirSync, writeFileSync, rmSync, existsSync } from 'fs';
 import { join } from 'path';
 import { suggestVariants } from '../src/core/suggest-variants';
@@ -272,5 +272,81 @@ describe('suggestVariants — fields filter', () => {
 
     const result = readJson(OUT_PATH) as unknown[];
     expect(result).toHaveLength(0);
+  });
+});
+
+describe('suggestVariants — source annotation', () => {
+  const DB_PATH = join(TMP_DIR, 'db-summary.json');
+
+  function writeDb(data: unknown) {
+    writeFileSync(DB_PATH, JSON.stringify(data, null, 2), 'utf-8');
+  }
+
+  it('annotates source as [db] when value is found in db-summary', () => {
+    writeCoverage({
+      fields: {
+        status: {
+          codeValues: ['PENDING', 'CANCEL'],
+          fixtureValues: ['PENDING'],
+          missingInFixtures: ['CANCEL'],
+          extraInFixtures: [],
+          coverage: { covered: 1, total: 2, percent: 50 },
+        },
+      },
+    });
+    writeDb({ fields: { status: { count: 2, values: ['PENDING', 'CANCEL'] } } });
+
+    const logs: string[] = [];
+    const spy = vi.spyOn(console, 'log').mockImplementation((msg: string) => logs.push(msg));
+
+    suggestVariants({ coveragePath: COVERAGE_PATH, dbSummaryPath: DB_PATH });
+
+    spy.mockRestore();
+    expect(logs.join('\n')).toContain('[db]');
+  });
+
+  it('annotates source as [code] when value is not in db-summary', () => {
+    writeCoverage({
+      fields: {
+        status: {
+          codeValues: ['PENDING', 'CANCEL'],
+          fixtureValues: ['PENDING'],
+          missingInFixtures: ['CANCEL'],
+          extraInFixtures: [],
+          coverage: { covered: 1, total: 2, percent: 50 },
+        },
+      },
+    });
+    writeDb({ fields: { status: { count: 1, values: ['PENDING'] } } });
+
+    const logs: string[] = [];
+    const spy = vi.spyOn(console, 'log').mockImplementation((msg: string) => logs.push(msg));
+
+    suggestVariants({ coveragePath: COVERAGE_PATH, dbSummaryPath: DB_PATH });
+
+    spy.mockRestore();
+    expect(logs.join('\n')).toContain('[code]');
+  });
+
+  it('shows [code] when no dbSummaryPath is provided', () => {
+    writeCoverage({
+      fields: {
+        status: {
+          codeValues: ['CANCEL'],
+          fixtureValues: [],
+          missingInFixtures: ['CANCEL'],
+          extraInFixtures: [],
+          coverage: { covered: 0, total: 1, percent: 0 },
+        },
+      },
+    });
+
+    const logs: string[] = [];
+    const spy = vi.spyOn(console, 'log').mockImplementation((msg: string) => logs.push(msg));
+
+    suggestVariants({ coveragePath: COVERAGE_PATH });
+
+    spy.mockRestore();
+    expect(logs.join('\n')).toContain('[code]');
   });
 });
