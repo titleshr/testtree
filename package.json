@@ -48,6 +48,7 @@
     "mongodb": "^7.2.0",
     "socks": "^2.8.9",
     "ts-morph": "^28.0.0",
+    "yaml": "^2.9.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {

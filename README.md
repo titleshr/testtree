@@ -489,6 +489,54 @@ testtree scan-schema \
 
 ---
 
+### `testtree scan-openapi`
+
+Scan an OpenAPI spec file (YAML or JSON) to extract enum values and required fields from `components.schemas`.
+
+```bash
+testtree scan-openapi --input <path> --out <path>
+```
+
+| Option | Description |
+|---|---|
+| `--input` | Path to OpenAPI spec (`.yaml`, `.yml`, or `.json`) |
+| `--out` | Output path for `openapi-summary.json` |
+
+**Extracts:**
+- Enum values from properties with `enum` arrays → rule `"enum"`
+- Required fields from `required` arrays → rule `"required"`
+- Nested property paths (e.g. `payment.type`)
+- `$ref` references within `components/schemas`
+
+**Usage:**
+
+```bash
+testtree scan-openapi \
+  --input ./openapi.yaml \
+  --out ./testtree/openapi-summary.json
+```
+
+**Example output (`openapi-summary.json`):**
+```json
+{
+  "fields": {
+    "status": {
+      "count": 3,
+      "values": ["PENDING", "COMPLETE", "CANCEL"],
+      "rules": ["enum", "required"]
+    },
+    "payment.type": {
+      "count": 2,
+      "values": ["COD", "BANK"],
+      "rules": ["enum"]
+    }
+  },
+  "meta": { "source": "openapi" }
+}
+```
+
+---
+
 ### `testtree show-summary`
 
 Display any summary JSON file in human-readable plain text. Works with `ts-summary.json`, `code-summary.json`, and `fixture-summary.json`.

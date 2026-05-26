@@ -17,6 +17,7 @@ import { suggestVariants } from '../core/suggest-variants';
 import { scanSchema } from '../core/scan-schema';
 import { scanDb } from '../core/scan-db';
 import { mergeConditions } from '../core/merge-conditions';
+import { scanOpenApi } from '../core/scan-openapi';
 
 const program = new Command();
 
@@ -294,6 +295,20 @@ program
     try {
       const ignore = options.ignore ? options.ignore.split(',').map((s: string) => s.trim()) : undefined;
       generateTemplate({ samplePath: options.sample, outPath: options.out, ignore });
+    } catch (err) {
+      console.error('Error:', (err as Error).message);
+      process.exit(1);
+    }
+  });
+
+program
+  .command('scan-openapi')
+  .description('Scan an OpenAPI spec (YAML or JSON) for enum values and required fields')
+  .requiredOption('--input <path>', 'Path to OpenAPI spec (.yaml, .yml, or .json)')
+  .requiredOption('--out <path>', 'Output path for openapi-summary.json')
+  .action((options) => {
+    try {
+      scanOpenApi({ inputPath: options.input, outPath: options.out });
     } catch (err) {
       console.error('Error:', (err as Error).message);
       process.exit(1);
